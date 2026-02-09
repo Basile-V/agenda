@@ -64,7 +64,9 @@ _la version Microsoft Outlook ..._
 
 ## ⚠️ Modalités de rendu ⚠️
 
-> **Pour le rendu, Poussez sur une nouvelle branche git, ouvrez une merge request vers Main, et notifiez votre interlocuteur par message que le kata est fini.
+* poussez sur une nouvelle branche git
+* ouvrez une merge request vers Main
+* notifiez votre interlocuteur par message que le kata est fini
 
 # Motivation du kata & contexte
 
