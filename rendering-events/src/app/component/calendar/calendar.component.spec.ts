@@ -1,0 +1,42 @@
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { CalendarComponent } from './calendar.component';
+import { EventComponent } from '../event/event.component';
+import { By } from '@angular/platform-browser';
+
+import * as inputJson from '../../../assets/input.json';
+
+describe('CalendarComponent (integration)', () => {
+  let fixture: ComponentFixture<CalendarComponent>;
+  let httpMock: HttpTestingController;
+
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule, CalendarComponent, EventComponent]
+    }).compileComponents();
+  }));
+
+  beforeEach(() => {
+    httpMock = TestBed.inject(HttpTestingController);
+    fixture = TestBed.createComponent(CalendarComponent);
+    fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    httpMock.verify();
+  });
+
+  it('renders events from assets/input.json with expected ids', () => {
+    const req = httpMock.expectOne('assets/input.json');
+    req.flush((inputJson as any).default || inputJson);
+
+    fixture.detectChanges();
+
+    const compiled = fixture.debugElement.nativeElement as HTMLElement;
+    const inputs: any[] = (inputJson as any).default || inputJson;
+    for (const e of inputs) {
+      const el = compiled.querySelector(`#event-${e.id}`);
+      expect(el).withContext(`event-${e.id} exists`).not.toBeNull();
+    }
+  });
+});

@@ -1,0 +1,30 @@
+.event {
+  position: absolute;
+  border: 1px solid rgba(0, 0, 0, 0.6);
+  background: rgba(30, 120, 200, 0.14);
+  padding: 4px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.event:hover {
+  background: rgba(30, 120, 200, 0.24);
+  cursor: pointer;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.12);
+}
+
+.event:focus {
+  outline: 2px solid rgba(30,120,200,0.5);
+  outline-offset: 0px;
+}
+
+.event-label {
+  font-size: 13px;
+  line-height: 1;
+}
+
+.event-time {
+  display: block;
+  font-size: 11px;
+  color: rgba(0,0,0,0.6);
+}

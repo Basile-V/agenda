@@ -1,0 +1,24 @@
+
+:host {
+	display: block;
+	height: 100vh;
+}
+
+.calendar-container {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	box-sizing: border-box;
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+.event {
+	position: absolute;
+	border: 1px solid rgba(0, 0, 0, 0.6);
+	background: rgba(30, 120, 200, 0.14);
+	padding: 4px;
+	box-sizing: border-box;
+	overflow: hidden;
+}
+
