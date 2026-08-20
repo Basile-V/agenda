@@ -1,13 +1,15 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EventService } from '../../services/event.service';
 import { layoutEvents, LayoutEvent } from '../../utils/layout.utils';
 import { EventComponent } from '../event/event.component';
+import { TimeSlotComponent } from '../time-slot/time-slot.component';
+import { DAY_END_HOUR, DAY_START_HOUR } from '../../models/event.model';
 
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [CommonModule, EventComponent],
+  imports: [CommonModule, EventComponent, TimeSlotComponent],
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.scss']
 })
@@ -19,6 +21,8 @@ export class CalendarComponent implements AfterViewInit {
   private eventsLoaded = false;
   private lastEvents: any[] = [];
   private resizeObserver?: ResizeObserver;
+  hours = Array.from({ length: DAY_END_HOUR - DAY_START_HOUR }, (_, i) => DAY_START_HOUR + i);
+  height = 0;
 
   constructor(private eventService: EventService, private cdr: ChangeDetectorRef) {}
 
@@ -51,8 +55,9 @@ export class CalendarComponent implements AfterViewInit {
 
   private updateLayout(events: any[]) {
     const el = this.containerRef.nativeElement;
-    const width = el.clientWidth;
+    const width = el.clientWidth - 20;
     const height = el.clientHeight;
+    this.height = height;
     this.layouted = layoutEvents(events, width, height);
     this.cdr.detectChanges();
   }

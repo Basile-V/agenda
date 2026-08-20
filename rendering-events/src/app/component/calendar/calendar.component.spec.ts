@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { CalendarComponent } from './calendar.component';
 import { EventComponent } from '../event/event.component';
-import { By } from '@angular/platform-browser';
 
 import * as inputJson from '../../../assets/input.json';
 

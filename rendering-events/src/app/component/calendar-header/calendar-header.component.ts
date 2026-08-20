@@ -7,7 +7,8 @@ import { IconComponent } from "../icon/icon.component";
   selector: 'app-calendar-header',
   standalone: true,
   imports: [CommonModule, ButtonComponent, IconComponent],
-  templateUrl: './calendar-header.component.html'
+  templateUrl: './calendar-header.component.html',
+  styleUrls: ['./calendar-header.component.scss']
 })
 export class CalendarHeaderComponent{
     dateSelected: WritableSignal<Date> = signal(new Date());

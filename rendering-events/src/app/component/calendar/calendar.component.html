@@ -1,3 +1,9 @@
 <div #container class="calendar-container">
-    <app-event *ngFor="let ev of layouted" [event]="ev"></app-event>
+    <div class="events-container">
+        <app-event *ngFor="let ev of layouted" [event]="ev"></app-event>
+    </div>
+
+    <div class="time-slots-container" [style.height.px]="height">
+        <app-time-slot *ngFor="let hour of hours" [hour]="hour" [height]="height/hours.length - 1"></app-time-slot>
+    </div>
 </div>

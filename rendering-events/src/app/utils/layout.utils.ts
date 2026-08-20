@@ -104,7 +104,7 @@ export function layoutEvents(events: ParsedEvent[], containerWidth: number, cont
 
       const top = minutesToY(ev.startMinutes, containerHeight);
       const height = Math.max(1, ev.duration * ppm);
-      const left = col * columnWidth;
+      const left = col * columnWidth + 20; // add 20px padding for left margin
       const width = columnWidth * Math.max(1, freeCols);
 
       result.push({
