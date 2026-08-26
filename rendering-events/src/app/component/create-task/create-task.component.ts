@@ -8,7 +8,6 @@ import { MatButtonModule } from '@angular/material/button';
 
 @Component({
     selector: 'create-task-event',
-    standalone: true,
     imports: [CommonModule, ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatButtonModule],
     templateUrl: './create-task.component.html',
     styleUrls: ['./create-task.component.scss']

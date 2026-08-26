@@ -10,11 +10,10 @@ import { MatDialog } from "@angular/material/dialog";
 import { CreateTaskComponent } from '../create-task/create-task.component';
 
 @Component({
-  selector: 'app-calendar',
-  standalone: true,
-  imports: [CommonModule, EventComponent, TimeSlotComponent, MatIcon],
-  templateUrl: './calendar.component.html',
-  styleUrls: ['./calendar.component.scss']
+    selector: 'app-calendar',
+    imports: [CommonModule, EventComponent, TimeSlotComponent, MatIcon],
+    templateUrl: './calendar.component.html',
+    styleUrls: ['./calendar.component.scss']
 })
 export class CalendarComponent implements AfterViewInit {
   @ViewChild('container', { static: true }) containerRef!: ElementRef<HTMLDivElement>;
