@@ -29,8 +29,7 @@ describe('EventComponent', () => {
       totalColumns: 1
     } as any;
 
-    const comp = fixture.componentInstance;
-    comp.event = mock;
+    fixture.componentRef.setInput('event', mock);
     fixture.detectChanges();
 
     const el: HTMLElement = fixture.nativeElement.querySelector('.event');

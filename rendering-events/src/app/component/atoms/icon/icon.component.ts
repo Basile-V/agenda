@@ -1,14 +1,13 @@
-import { Component, Input, ChangeDetectionStrategy } from "@angular/core";
+import { Component, input, ChangeDetectionStrategy } from "@angular/core";
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
     selector: 'app-icon',
     templateUrl: './icon.component.html',
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [MatIconModule]
 })
 export class IconComponent{
-    @Input() icon = '';
-    @Input() action: (() => void) | undefined;
-
+    icon = input('');
+    action = input<(() => void) | undefined>(undefined);
 }

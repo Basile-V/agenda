@@ -6,7 +6,7 @@ import { CalendarHeaderComponent } from "./component/molecules/calendar-header/c
     selector: 'app-root',
     imports: [CalendarComponent, CalendarHeaderComponent],
     templateUrl: './app.component.html',
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     styleUrl: './app.component.scss'
 })
 export class AppComponent {

@@ -10,7 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
     selector: 'create-task-event',
     imports: [ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatButtonModule],
     templateUrl: './create-task.component.html',
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     styleUrls: ['./create-task.component.scss']
 })
 export class CreateTaskComponent {

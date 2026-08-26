@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 
 import { LayoutEvent } from '../../../utils/layout.utils';
 
@@ -6,9 +6,9 @@ import { LayoutEvent } from '../../../utils/layout.utils';
     selector: 'app-event',
     imports: [],
     templateUrl: './event.component.html',
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     styleUrls: ['./event.component.scss']
 })
 export class EventComponent {
-  @Input({ required: true }) event!: LayoutEvent | null;
+  event = input.required<LayoutEvent | null>();
 }

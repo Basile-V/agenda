@@ -7,7 +7,7 @@ import { IconComponent } from "../../atoms/icon/icon.component";
     selector: 'app-calendar-header',
     imports: [CommonModule, ButtonComponent, IconComponent],
     templateUrl: './calendar-header.component.html',
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     styleUrls: ['./calendar-header.component.scss']
 })
 export class CalendarHeaderComponent{
