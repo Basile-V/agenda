@@ -23,7 +23,7 @@ describe('EventService', () => {
   afterEach(() => httpMock.verify());
 
   it('loadEvents parses startMinutes and endMinutes', (done) => {
-    const mock = [{ id: 7, start: '09:30', duration: 30 }];
+    const mock = [{ id: 7, date: '2026-08-26', start: '09:30', duration: 30 }];
 
     service.loadEvents().subscribe((list) => {
       expect(list.length).toBeGreaterThan(0);

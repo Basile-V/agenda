@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, WritableSignal, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, model, ChangeDetectionStrategy } from '@angular/core';
 import { ButtonComponent } from '../../atoms/button/button.component';
 import { IconComponent } from '../../atoms/icon/icon.component';
 
@@ -11,7 +11,7 @@ import { IconComponent } from '../../atoms/icon/icon.component';
   styleUrls: ['./calendar-header.component.scss'],
 })
 export class CalendarHeaderComponent {
-  dateSelected: WritableSignal<Date> = signal(new Date());
+  dateSelected = model<Date>(new Date());
   todayButton = "Aujourd'hui";
   iconLeft = 'keyboard_arrow_left';
   iconRight = 'keyboard_arrow_right';

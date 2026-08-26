@@ -1,4 +1,4 @@
 <div class="app-container">
-  <app-calendar-header></app-calendar-header>
-  <app-calendar></app-calendar>
+  <app-calendar-header [(dateSelected)]="selectedDate"></app-calendar-header>
+  <app-calendar [selectedDate]="selectedDate()"></app-calendar>
 </div>

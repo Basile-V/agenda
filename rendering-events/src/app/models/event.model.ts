@@ -1,6 +1,7 @@
 export interface EventRaw {
   id: number;
   title?: string;
+  date: string; // 'YYYY-MM-DD'
   start: string; // 'HH:MM'
   duration: number; // minutes
 }
@@ -18,4 +19,15 @@ export const DAY_END_MIN = DAY_END_HOUR * 60; // 21:00
 export function parseTimeToMinutes(t: string): number {
   const [h, m] = t.split(':').map(Number);
   return h * 60 + m;
+}
+
+export function toDateKey(date: Date): string {
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, '0');
+  const day = `${date.getDate()}`.padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+export function isSameDate(eventDate: string, date: Date): boolean {
+  return eventDate === toDateKey(date);
 }
