@@ -9,9 +9,13 @@ describe('EventService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-    imports: [],
-    providers: [EventService, provideHttpClient(withXhr(), withInterceptorsFromDi()), provideHttpClientTesting()]
-});
+      imports: [],
+      providers: [
+        EventService,
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+      ],
+    });
     service = TestBed.inject(EventService);
     httpMock = TestBed.inject(HttpTestingController);
   });
@@ -21,7 +25,7 @@ describe('EventService', () => {
   it('loadEvents parses startMinutes and endMinutes', (done) => {
     const mock = [{ id: 7, start: '09:30', duration: 30 }];
 
-    service.loadEvents().subscribe(list => {
+    service.loadEvents().subscribe((list) => {
       expect(list.length).toBeGreaterThan(0);
       const e = list[0];
       expect(e.startMinutes).toBe(9 * 60 + 30);

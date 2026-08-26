@@ -21,7 +21,7 @@ describe('layout.utils', () => {
     const events = [
       { id: 1, start: '10:00', duration: 120, startMinutes: 10 * 60, endMinutes: 12 * 60 },
       { id: 2, start: '10:30', duration: 60, startMinutes: 10 * 60 + 30, endMinutes: 11 * 60 + 30 },
-      { id: 3, start: '11:00', duration: 30, startMinutes: 11 * 60, endMinutes: 11 * 60 + 30 }
+      { id: 3, start: '11:00', duration: 30, startMinutes: 11 * 60, endMinutes: 11 * 60 + 30 },
     ];
     const width = 600;
     const height = 720;

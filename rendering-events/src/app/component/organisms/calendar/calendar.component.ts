@@ -1,20 +1,30 @@
-import { AfterViewInit, Component, ElementRef, HostListener, inject, OnDestroy, signal, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  HostListener,
+  inject,
+  OnDestroy,
+  signal,
+  ViewChild,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 
 import { EventService } from '../../../services/event.service';
 import { layoutEvents, LayoutEvent } from '../../../utils/layout.utils';
 import { EventComponent } from '../../molecules/event/event.component';
 import { TimeSlotComponent } from '../../molecules/time-slot/time-slot.component';
 import { DAY_END_HOUR, DAY_START_HOUR, ParsedEvent } from '../../../models/event.model';
-import { MatIcon } from "@angular/material/icon";
-import { MatDialog } from "@angular/material/dialog";
+import { MatIcon } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
 import { CreateTaskComponent } from '../create-task/create-task.component';
 
 @Component({
-    selector: 'app-calendar',
-    imports: [EventComponent, TimeSlotComponent, MatIcon],
-    templateUrl: './calendar.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    styleUrls: ['./calendar.component.scss']
+  selector: 'app-calendar',
+  imports: [EventComponent, TimeSlotComponent, MatIcon],
+  templateUrl: './calendar.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['./calendar.component.scss'],
 })
 export class CalendarComponent implements AfterViewInit, OnDestroy {
   @ViewChild('container', { static: true }) containerRef!: ElementRef<HTMLDivElement>;
@@ -30,7 +40,7 @@ export class CalendarComponent implements AfterViewInit, OnDestroy {
   private resizeObserver?: ResizeObserver;
 
   ngAfterViewInit(): void {
-    this.eventService.loadEvents().subscribe(list => {
+    this.eventService.loadEvents().subscribe((list) => {
       this.eventsLoaded = true;
       this.lastEvents = list;
       this.updateLayout(list);
@@ -65,7 +75,7 @@ export class CalendarComponent implements AfterViewInit, OnDestroy {
   openDialog(): void {
     const dialogRef = this.dialog.open(CreateTaskComponent);
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         const newEvent = this.eventService.createEvent(result);
         this.lastEvents = [...this.lastEvents, newEvent];

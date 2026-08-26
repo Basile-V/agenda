@@ -7,7 +7,7 @@
 
   <div class="time-slots-container" [style.height.px]="height()">
     @for (hour of hours; track hour) {
-      <app-time-slot [hour]="hour" [height]="height()/hours.length - 1"></app-time-slot>
+      <app-time-slot [hour]="hour" [height]="height() / hours.length - 1"></app-time-slot>
     }
   </div>
   <div id="add-event">

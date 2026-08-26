@@ -6,7 +6,7 @@ describe('EventComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EventComponent]
+      imports: [EventComponent],
     }).compileComponents();
   });
 
@@ -26,7 +26,7 @@ describe('EventComponent', () => {
       width: 200,
       height: 30,
       column: 0,
-      totalColumns: 1
+      totalColumns: 1,
     } as any;
 
     fixture.componentRef.setInput('event', mock);

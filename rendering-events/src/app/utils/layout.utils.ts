@@ -25,7 +25,9 @@ export function pixelsPerMinute(containerHeight: number): number {
 // Group events into clusters where any event intersects another in the same cluster
 export function clusterEvents(events: ParsedEvent[]): ParsedEvent[][] {
   if (!events || events.length === 0) return [];
-  const sorted = [...events].sort((a, b) => a.startMinutes - b.startMinutes || a.endMinutes - b.endMinutes);
+  const sorted = [...events].sort(
+    (a, b) => a.startMinutes - b.startMinutes || a.endMinutes - b.endMinutes,
+  );
   const clusters: ParsedEvent[][] = [];
   let currentCluster: ParsedEvent[] = [sorted[0]];
   let currentMaxEnd = sorted[0].endMinutes;
@@ -72,7 +74,11 @@ function assignColumns(cluster: ParsedEvent[]): { assign: Map<number, number>; c
 }
 
 // Main layout function: returns layouted events with top/height/left/width in pixels
-export function layoutEvents(events: ParsedEvent[], containerWidth: number, containerHeight: number): LayoutEvent[] {
+export function layoutEvents(
+  events: ParsedEvent[],
+  containerWidth: number,
+  containerHeight: number,
+): LayoutEvent[] {
   const ppm = pixelsPerMinute(containerHeight);
   const clusters = clusterEvents(events);
   const result: LayoutEvent[] = [];
@@ -114,7 +120,7 @@ export function layoutEvents(events: ParsedEvent[], containerWidth: number, cont
         left,
         width,
         column: col,
-        totalColumns: columns
+        totalColumns: columns,
       });
     }
   }
