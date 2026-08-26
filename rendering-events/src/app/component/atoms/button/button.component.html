@@ -1,1 +1,14 @@
-<button class="effectButton" type="button" (click)="action()?.()">{{ message() }}</button>
+@if (fab()) {
+  <button matFab class="fab" [attr.aria-label]="ariaLabel() || null" (click)="action()?.()">
+    <mat-icon>{{ icon() }}</mat-icon>
+  </button>
+} @else {
+  <button
+    class="effectButton"
+    type="button"
+    [attr.aria-label]="ariaLabel() || null"
+    (click)="action()?.()"
+  >
+    {{ message() }}
+  </button>
+}

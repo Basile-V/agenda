@@ -11,8 +11,6 @@
     }
   </div>
   <div id="add-event">
-    <button matFab aria-label="add event" (click)="openDialog()">
-      <mat-icon>add</mat-icon>
-    </button>
+    <app-button [fab]="true" icon="add" ariaLabel="add event" [action]="() => openDialog()"></app-button>
   </div>
 </div>

@@ -15,13 +15,13 @@ import { layoutEvents, LayoutEvent } from '../../../utils/layout.utils';
 import { EventComponent } from '../../molecules/event/event.component';
 import { TimeSlotComponent } from '../../molecules/time-slot/time-slot.component';
 import { DAY_END_HOUR, DAY_START_HOUR, ParsedEvent } from '../../../models/event.model';
-import { MatIcon } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateTaskComponent } from '../create-task/create-task.component';
+import { ButtonComponent } from '../../atoms/button/button.component';
 
 @Component({
   selector: 'app-calendar',
-  imports: [EventComponent, TimeSlotComponent, MatIcon],
+  imports: [EventComponent, TimeSlotComponent, ButtonComponent],
   templateUrl: './calendar.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./calendar.component.scss'],
