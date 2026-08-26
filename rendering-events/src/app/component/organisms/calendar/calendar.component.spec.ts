@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { CalendarComponent } from './calendar.component';
-import { EventComponent } from '../event/event.component';
+import { EventComponent } from '../../molecules/event/event.component';
 
-import * as inputJson from '../../../assets/input.json';
+import * as inputJson from '../../../../assets/input.json';
 import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 
 describe('CalendarComponent (integration)', () => {

@@ -1,13 +1,13 @@
 <div #container class="calendar-container">
   <div class="events-container">
-    @for (ev of layouted; track ev) {
+    @for (ev of layouted(); track ev.id) {
       <app-event [event]="ev"></app-event>
     }
   </div>
 
-  <div class="time-slots-container" [style.height.px]="height">
+  <div class="time-slots-container" [style.height.px]="height()">
     @for (hour of hours; track hour) {
-      <app-time-slot [hour]="hour" [height]="height/hours.length - 1"></app-time-slot>
+      <app-time-slot [hour]="hour" [height]="height()/hours.length - 1"></app-time-slot>
     }
   </div>
   <div id="add-event">

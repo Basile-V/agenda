@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { CalendarComponent } from './component/calendar/calendar.component';
-import { CalendarHeaderComponent } from "./component/calendar-header/calendar-header.component";
+import { CalendarComponent } from './component/organisms/calendar/calendar.component';
+import { CalendarHeaderComponent } from "./component/molecules/calendar-header/calendar-header.component";
 
 @Component({
     selector: 'app-root',

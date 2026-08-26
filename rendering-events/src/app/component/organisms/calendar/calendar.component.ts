@@ -1,10 +1,10 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, inject, OnDestroy, signal, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, inject, OnDestroy, signal, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 
-import { EventService } from '../../services/event.service';
-import { layoutEvents, LayoutEvent } from '../../utils/layout.utils';
-import { EventComponent } from '../event/event.component';
-import { TimeSlotComponent } from '../time-slot/time-slot.component';
-import { DAY_END_HOUR, DAY_START_HOUR } from '../../models/event.model';
+import { EventService } from '../../../services/event.service';
+import { layoutEvents, LayoutEvent } from '../../../utils/layout.utils';
+import { EventComponent } from '../../molecules/event/event.component';
+import { TimeSlotComponent } from '../../molecules/time-slot/time-slot.component';
+import { DAY_END_HOUR, DAY_START_HOUR, ParsedEvent } from '../../../models/event.model';
 import { MatIcon } from "@angular/material/icon";
 import { MatDialog } from "@angular/material/dialog";
 import { CreateTaskComponent } from '../create-task/create-task.component';
@@ -13,22 +13,21 @@ import { CreateTaskComponent } from '../create-task/create-task.component';
     selector: 'app-calendar',
     imports: [EventComponent, TimeSlotComponent, MatIcon],
     templateUrl: './calendar.component.html',
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     styleUrls: ['./calendar.component.scss']
 })
-export class CalendarComponent implements AfterViewInit {
+export class CalendarComponent implements AfterViewInit, OnDestroy {
   @ViewChild('container', { static: true }) containerRef!: ElementRef<HTMLDivElement>;
+  private readonly eventService = inject(EventService);
   readonly dialog = inject(MatDialog);
 
-  layouted: LayoutEvent[] = [];
+  readonly layouted = signal<LayoutEvent[]>([]);
+  readonly height = signal(0);
+  hours = Array.from({ length: DAY_END_HOUR - DAY_START_HOUR }, (_, i) => DAY_START_HOUR + i);
 
   private eventsLoaded = false;
-  private lastEvents: any[] = [];
+  private lastEvents: ParsedEvent[] = [];
   private resizeObserver?: ResizeObserver;
-  hours = Array.from({ length: DAY_END_HOUR - DAY_START_HOUR }, (_, i) => DAY_START_HOUR + i);
-  height = 0;
-
-  constructor(private eventService: EventService, private cdr: ChangeDetectorRef) {}
 
   ngAfterViewInit(): void {
     this.eventService.loadEvents().subscribe(list => {
@@ -51,24 +50,20 @@ export class CalendarComponent implements AfterViewInit {
   }
 
   ngOnDestroy(): void {
-    if (this.resizeObserver) {
-      this.resizeObserver.disconnect();
-      this.resizeObserver = undefined;
-    }
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = undefined;
   }
 
-  private updateLayout(events: any[]) {
+  private updateLayout(events: ParsedEvent[]) {
     const el = this.containerRef.nativeElement;
     const width = el.clientWidth - 20;
     const height = el.clientHeight;
-    this.height = height;
-    this.layouted = layoutEvents(events, width, height);
-    this.cdr.detectChanges();
+    this.height.set(height);
+    this.layouted.set(layoutEvents(events, width, height));
   }
 
   openDialog(): void {
-    const dialogRef = this.dialog.open(CreateTaskComponent, {
-    });
+    const dialogRef = this.dialog.open(CreateTaskComponent);
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
@@ -79,4 +74,3 @@ export class CalendarComponent implements AfterViewInit {
     });
   }
 }
-

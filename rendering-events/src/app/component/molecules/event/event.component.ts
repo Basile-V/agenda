@@ -1,6 +1,6 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
-import { LayoutEvent } from '../../utils/layout.utils';
+import { LayoutEvent } from '../../../utils/layout.utils';
 
 @Component({
     selector: 'app-event',

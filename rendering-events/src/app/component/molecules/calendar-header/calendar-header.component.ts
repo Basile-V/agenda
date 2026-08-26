@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, WritableSignal, signal, ChangeDetectionStrategy } from "@angular/core";
-import { ButtonComponent } from "../button/button.component";
-import { IconComponent } from "../icon/icon.component";
+import { ButtonComponent } from "../../atoms/button/button.component";
+import { IconComponent } from "../../atoms/icon/icon.component";
 
 @Component({
     selector: 'app-calendar-header',
