@@ -18,6 +18,10 @@ export class EventService {
     );
   }
 
+  createEvent(raw: Omit<EventRaw, 'id'>): ParsedEvent {
+    return this.parseEvent({ id: Date.now(), ...raw });
+  }
+
   private parseEvent(e: EventRaw): ParsedEvent {
     const startMinutes = parseTimeToMinutes(e.start);
     const endMinutes = startMinutes + e.duration;

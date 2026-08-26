@@ -1,5 +1,6 @@
 export interface EventRaw {
   id: number;
+  title?: string;
   start: string; // 'HH:MM'
   duration: number; // minutes
 }

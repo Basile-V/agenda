@@ -6,4 +6,9 @@
     <div class="time-slots-container" [style.height.px]="height">
         <app-time-slot *ngFor="let hour of hours" [hour]="hour" [height]="height/hours.length - 1"></app-time-slot>
     </div>
+    <div id="add-event">
+        <button matFab aria-label="add event" (click)="openDialog()">
+            <mat-icon>add</mat-icon>
+        </button>
+    </div>
 </div>

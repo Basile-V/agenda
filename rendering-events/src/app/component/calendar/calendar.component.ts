@@ -1,20 +1,24 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, signal, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, inject, OnDestroy, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EventService } from '../../services/event.service';
 import { layoutEvents, LayoutEvent } from '../../utils/layout.utils';
 import { EventComponent } from '../event/event.component';
 import { TimeSlotComponent } from '../time-slot/time-slot.component';
 import { DAY_END_HOUR, DAY_START_HOUR } from '../../models/event.model';
+import { MatIcon } from "@angular/material/icon";
+import { MatDialog } from "@angular/material/dialog";
+import { CreateTaskComponent } from '../create-task/create-task.component';
 
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [CommonModule, EventComponent, TimeSlotComponent],
+  imports: [CommonModule, EventComponent, TimeSlotComponent, MatIcon],
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.scss']
 })
 export class CalendarComponent implements AfterViewInit {
   @ViewChild('container', { static: true }) containerRef!: ElementRef<HTMLDivElement>;
+  readonly dialog = inject(MatDialog);
 
   layouted: LayoutEvent[] = [];
 
@@ -61,4 +65,18 @@ export class CalendarComponent implements AfterViewInit {
     this.layouted = layoutEvents(events, width, height);
     this.cdr.detectChanges();
   }
+
+  openDialog(): void {
+    const dialogRef = this.dialog.open(CreateTaskComponent, {
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const newEvent = this.eventService.createEvent(result);
+        this.lastEvents = [...this.lastEvents, newEvent];
+        this.updateLayout(this.lastEvents);
+      }
+    });
+  }
 }
+
