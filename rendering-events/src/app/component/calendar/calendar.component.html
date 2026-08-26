@@ -1,14 +1,18 @@
 <div #container class="calendar-container">
-    <div class="events-container">
-        <app-event *ngFor="let ev of layouted" [event]="ev"></app-event>
-    </div>
+  <div class="events-container">
+    @for (ev of layouted; track ev) {
+      <app-event [event]="ev"></app-event>
+    }
+  </div>
 
-    <div class="time-slots-container" [style.height.px]="height">
-        <app-time-slot *ngFor="let hour of hours" [hour]="hour" [height]="height/hours.length - 1"></app-time-slot>
-    </div>
-    <div id="add-event">
-        <button matFab aria-label="add event" (click)="openDialog()">
-            <mat-icon>add</mat-icon>
-        </button>
-    </div>
+  <div class="time-slots-container" [style.height.px]="height">
+    @for (hour of hours; track hour) {
+      <app-time-slot [hour]="hour" [height]="height/hours.length - 1"></app-time-slot>
+    }
+  </div>
+  <div id="add-event">
+    <button matFab aria-label="add event" (click)="openDialog()">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
 </div>

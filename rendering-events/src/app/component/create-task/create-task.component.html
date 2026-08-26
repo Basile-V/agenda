@@ -5,21 +5,31 @@
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>Titre</mat-label>
       <input matInput formControlName="title" placeholder="Ex : Réunion équipe" />
-      <mat-error *ngIf="form.controls.title.hasError('required')">Le titre est requis</mat-error>
+      @if (form.controls.title.hasError('required')) {
+        <mat-error>Le titre est requis</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>Heure de début</mat-label>
       <input matInput type="time" formControlName="start" />
-      <mat-error *ngIf="form.controls.start.hasError('required')">L'heure de début est requise</mat-error>
-      <mat-error *ngIf="form.controls.start.hasError('pattern')">Format attendu HH:MM</mat-error>
+      @if (form.controls.start.hasError('required')) {
+        <mat-error>L'heure de début est requise</mat-error>
+      }
+      @if (form.controls.start.hasError('pattern')) {
+        <mat-error>Format attendu HH:MM</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>Durée (minutes)</mat-label>
       <input matInput type="number" min="1" formControlName="duration" />
-      <mat-error *ngIf="form.controls.duration.hasError('required')">La durée est requise</mat-error>
-      <mat-error *ngIf="form.controls.duration.hasError('min')">La durée doit être positive</mat-error>
+      @if (form.controls.duration.hasError('required')) {
+        <mat-error>La durée est requise</mat-error>
+      }
+      @if (form.controls.duration.hasError('min')) {
+        <mat-error>La durée doit être positive</mat-error>
+      }
     </mat-form-field>
   </mat-dialog-content>
 

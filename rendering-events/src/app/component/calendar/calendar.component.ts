@@ -1,5 +1,5 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, inject, OnDestroy, signal, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { EventService } from '../../services/event.service';
 import { layoutEvents, LayoutEvent } from '../../utils/layout.utils';
 import { EventComponent } from '../event/event.component';
@@ -11,7 +11,7 @@ import { CreateTaskComponent } from '../create-task/create-task.component';
 
 @Component({
     selector: 'app-calendar',
-    imports: [CommonModule, EventComponent, TimeSlotComponent, MatIcon],
+    imports: [EventComponent, TimeSlotComponent, MatIcon],
     templateUrl: './calendar.component.html',
     styleUrls: ['./calendar.component.scss']
 })

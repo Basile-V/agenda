@@ -1,9 +1,9 @@
 import { Component, Input, WritableSignal } from "@angular/core";
-import { CommonModule } from '@angular/common';
+
 
 @Component({
     selector: 'app-button',
-    imports: [CommonModule],
+    imports: [],
     templateUrl: './button.component.html'
 })
 export class ButtonComponent{
