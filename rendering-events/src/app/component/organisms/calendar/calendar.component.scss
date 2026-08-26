@@ -1,0 +1,36 @@
+:host {
+  display: block;
+  height: 100vh;
+}
+
+.calendar-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.event {
+  position: absolute;
+  border: 1px solid rgba(0, 0, 0, 0.6);
+  background: rgba(30, 120, 200, 0.14);
+  padding: 4px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.time-slots-container {
+  z-index: -1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+}
+
+#add-event {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
