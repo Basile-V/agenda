@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { CalendarComponent } from './calendar.component';
 import { EventComponent } from '../event/event.component';
 
 import * as inputJson from '../../../assets/input.json';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('CalendarComponent (integration)', () => {
   let fixture: ComponentFixture<CalendarComponent>;
@@ -11,8 +12,9 @@ describe('CalendarComponent (integration)', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, CalendarComponent, EventComponent]
-    }).compileComponents();
+    imports: [CalendarComponent, EventComponent],
+    providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+}).compileComponents();
   }));
 
   beforeEach(() => {
