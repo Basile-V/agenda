@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
 import { LayoutEvent } from '../../utils/layout.utils';
 
@@ -6,6 +6,7 @@ import { LayoutEvent } from '../../utils/layout.utils';
     selector: 'app-event',
     imports: [],
     templateUrl: './event.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./event.component.scss']
 })
 export class EventComponent {

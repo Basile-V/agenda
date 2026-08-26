@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, WritableSignal, signal } from "@angular/core";
+import { Component, WritableSignal, signal, ChangeDetectionStrategy } from "@angular/core";
 import { ButtonComponent } from "../button/button.component";
 import { IconComponent } from "../icon/icon.component";
 
@@ -7,6 +7,7 @@ import { IconComponent } from "../icon/icon.component";
     selector: 'app-calendar-header',
     imports: [CommonModule, ButtonComponent, IconComponent],
     templateUrl: './calendar-header.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./calendar-header.component.scss']
 })
 export class CalendarHeaderComponent{

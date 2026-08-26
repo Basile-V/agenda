@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, inject, OnDestroy, signal, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, inject, OnDestroy, signal, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 
 import { EventService } from '../../services/event.service';
 import { layoutEvents, LayoutEvent } from '../../utils/layout.utils';
@@ -13,6 +13,7 @@ import { CreateTaskComponent } from '../create-task/create-task.component';
     selector: 'app-calendar',
     imports: [EventComponent, TimeSlotComponent, MatIcon],
     templateUrl: './calendar.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./calendar.component.scss']
 })
 export class CalendarComponent implements AfterViewInit {

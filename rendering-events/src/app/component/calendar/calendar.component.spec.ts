@@ -4,7 +4,7 @@ import { CalendarComponent } from './calendar.component';
 import { EventComponent } from '../event/event.component';
 
 import * as inputJson from '../../../assets/input.json';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 
 describe('CalendarComponent (integration)', () => {
   let fixture: ComponentFixture<CalendarComponent>;
@@ -13,7 +13,7 @@ describe('CalendarComponent (integration)', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
     imports: [CalendarComponent, EventComponent],
-    providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+    providers: [provideHttpClient(withXhr(), withInterceptorsFromDi()), provideHttpClientTesting()]
 }).compileComponents();
   }));
 

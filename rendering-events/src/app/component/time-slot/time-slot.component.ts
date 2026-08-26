@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
 import { DAY_START_HOUR } from '../../models/event.model';
 
@@ -6,6 +6,7 @@ import { DAY_START_HOUR } from '../../models/event.model';
     selector: 'app-time-slot',
     imports: [],
     templateUrl: './time-slot.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./time-slot.component.scss']
 })
 export class TimeSlotComponent {
