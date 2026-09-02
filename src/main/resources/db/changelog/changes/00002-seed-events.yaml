@@ -1,0 +1,130 @@
+databaseChangeLog:
+  - changeSet:
+      id: 00002-seed-events
+      author: basile
+      context: seed
+      changes:
+        - insert:
+            tableName: event
+            columns:
+              - column: { name: id, valueNumeric: 7 }
+              - column: { name: event_date, valueComputed: "DATEADD('DAY', -1, CURRENT_DATE)" }
+              - column: { name: start_time, valueDate: "10:45:00" }
+              - column: { name: duration_minutes, valueNumeric: 30 }
+        - insert:
+            tableName: event
+            columns:
+              - column: { name: id, valueNumeric: 8 }
+              - column: { name: event_date, valueComputed: "DATEADD('DAY', -1, CURRENT_DATE)" }
+              - column: { name: start_time, valueDate: "17:00:00" }
+              - column: { name: duration_minutes, valueNumeric: 60 }
+        - insert:
+            tableName: event
+            columns:
+              - column: { name: id, valueNumeric: 9 }
+              - column: { name: event_date, valueComputed: "DATEADD('DAY', -1, CURRENT_DATE)" }
+              - column: { name: start_time, valueDate: "10:00:00" }
+              - column: { name: duration_minutes, valueNumeric: 30 }
+        - insert:
+            tableName: event
+            columns:
+              - column: { name: id, valueNumeric: 10 }
+              - column: { name: event_date, valueComputed: "DATEADD('DAY', -1, CURRENT_DATE)" }
+              - column: { name: start_time, valueDate: "11:50:00" }
+              - column: { name: duration_minutes, valueNumeric: 20 }
+        - insert:
+            tableName: event
+            columns:
+              - column: { name: id, valueNumeric: 11 }
+              - column: { name: event_date, valueComputed: "DATEADD('DAY', -1, CURRENT_DATE)" }
+              - column: { name: start_time, valueDate: "19:00:00" }
+              - column: { name: duration_minutes, valueNumeric: 60 }
+
+        - insert:
+            tableName: event
+            columns:
+              - column: { name: id, valueNumeric: 1 }
+              - column: { name: event_date, valueComputed: CURRENT_DATE }
+              - column: { name: start_time, valueDate: "17:00:00" }
+              - column: { name: duration_minutes, valueNumeric: 60 }
+        - insert:
+            tableName: event
+            columns:
+              - column: { name: id, valueNumeric: 2 }
+              - column: { name: event_date, valueComputed: CURRENT_DATE }
+              - column: { name: start_time, valueDate: "17:00:00" }
+              - column: { name: duration_minutes, valueNumeric: 120 }
+        - insert:
+            tableName: event
+            columns:
+              - column: { name: id, valueNumeric: 3 }
+              - column: { name: event_date, valueComputed: CURRENT_DATE }
+              - column: { name: start_time, valueDate: "19:40:00" }
+              - column: { name: duration_minutes, valueNumeric: 10 }
+        - insert:
+            tableName: event
+            columns:
+              - column: { name: id, valueNumeric: 4 }
+              - column: { name: event_date, valueComputed: CURRENT_DATE }
+              - column: { name: start_time, valueDate: "15:00:00" }
+              - column: { name: duration_minutes, valueNumeric: 20 }
+        - insert:
+            tableName: event
+            columns:
+              - column: { name: id, valueNumeric: 5 }
+              - column: { name: event_date, valueComputed: CURRENT_DATE }
+              - column: { name: start_time, valueDate: "18:00:00" }
+              - column: { name: duration_minutes, valueNumeric: 60 }
+        - insert:
+            tableName: event
+            columns:
+              - column: { name: id, valueNumeric: 6 }
+              - column: { name: event_date, valueComputed: CURRENT_DATE }
+              - column: { name: start_time, valueDate: "10:25:00" }
+              - column: { name: duration_minutes, valueNumeric: 35 }
+
+        - insert:
+            tableName: event
+            columns:
+              - column: { name: id, valueNumeric: 12 }
+              - column: { name: event_date, valueComputed: "DATEADD('DAY', 1, CURRENT_DATE)" }
+              - column: { name: start_time, valueDate: "09:00:00" }
+              - column: { name: duration_minutes, valueNumeric: 45 }
+        - insert:
+            tableName: event
+            columns:
+              - column: { name: id, valueNumeric: 13 }
+              - column: { name: event_date, valueComputed: "DATEADD('DAY', 1, CURRENT_DATE)" }
+              - column: { name: start_time, valueDate: "14:45:00" }
+              - column: { name: duration_minutes, valueNumeric: 60 }
+        - insert:
+            tableName: event
+            columns:
+              - column: { name: id, valueNumeric: 14 }
+              - column: { name: event_date, valueComputed: "DATEADD('DAY', 1, CURRENT_DATE)" }
+              - column: { name: start_time, valueDate: "19:20:00" }
+              - column: { name: duration_minutes, valueNumeric: 10 }
+        - insert:
+            tableName: event
+            columns:
+              - column: { name: id, valueNumeric: 15 }
+              - column: { name: event_date, valueComputed: "DATEADD('DAY', 1, CURRENT_DATE)" }
+              - column: { name: start_time, valueDate: "11:50:00" }
+              - column: { name: duration_minutes, valueNumeric: 30 }
+        - insert:
+            tableName: event
+            columns:
+              - column: { name: id, valueNumeric: 16 }
+              - column: { name: event_date, valueComputed: "DATEADD('DAY', 1, CURRENT_DATE)" }
+              - column: { name: start_time, valueDate: "11:40:00" }
+              - column: { name: duration_minutes, valueNumeric: 40 }
+        - insert:
+            tableName: event
+            columns:
+              - column: { name: id, valueNumeric: 17 }
+              - column: { name: event_date, valueComputed: "DATEADD('DAY', 1, CURRENT_DATE)" }
+              - column: { name: start_time, valueDate: "14:00:00" }
+              - column: { name: duration_minutes, valueNumeric: 30 }
+
+        - sql:
+            sql: ALTER TABLE event ALTER COLUMN id RESTART WITH 18
