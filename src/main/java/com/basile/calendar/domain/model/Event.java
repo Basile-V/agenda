@@ -18,4 +18,8 @@ public record Event(Long id, String title, LocalDate date, LocalTime start, int 
     public static Event draft(String title, LocalDate date, LocalTime start, int durationMinutes) {
         return new Event(null, title, date, start, durationMinutes);
     }
+
+    public Event withId(Long id) {
+        return new Event(id, title, date, start, durationMinutes);
+    }
 }

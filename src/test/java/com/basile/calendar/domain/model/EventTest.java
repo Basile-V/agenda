@@ -26,4 +26,18 @@ class EventTest {
         assertThatThrownBy(() -> Event.draft("Point équipe", LocalDate.of(2026, 9, 2), LocalTime.of(15, 0), 0))
                 .isInstanceOf(InvalidEventDurationException.class);
     }
+
+    @Test
+    void should_return_new_instance_with_id_when_assigning_id_to_draft() {
+        Event draft = Event.draft("Point équipe", LocalDate.of(2026, 9, 2), LocalTime.of(15, 0), 90);
+
+        Event persisted = draft.withId(1L);
+
+        assertThat(persisted.id()).isEqualTo(1L);
+        assertThat(persisted.title()).isEqualTo(draft.title());
+        assertThat(persisted.date()).isEqualTo(draft.date());
+        assertThat(persisted.start()).isEqualTo(draft.start());
+        assertThat(persisted.durationMinutes()).isEqualTo(draft.durationMinutes());
+        assertThat(draft.id()).isNull();
+    }
 }
