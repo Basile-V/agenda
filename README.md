@@ -1,12 +1,50 @@
 # 📅 RENDERING EVENTS 📅 
 
+## Stack technique
+
+- [Angular 22.1](https://angular.dev/) (composants standalone, sans `NgModule`)
+- [Angular Material 22](https://material.angular.io/) + Angular CDK
+- [RxJS 7.8](https://rxjs.dev/)
+- TypeScript en mode `strict`
+- SCSS pour le style
+- Tests unitaires : Karma + Jasmine
+
+## Lancer le projet en local
+
+Le code de l'application se trouve dans le dossier [`rendering-events/`](rendering-events).
+
+**Prérequis** : [Node.js](https://nodejs.org/) et npm installés.
+
+```bash
+cd rendering-events
+npm install
+npm start
+```
+
+L'application est ensuite accessible sur [http://localhost:4200](http://localhost:4200).
+
+Autres commandes utiles (à lancer depuis `rendering-events/`) :
+
+```bash
+npm run build   # build de production
+npm test        # tests unitaires (Karma/Jasmine)
+npm run lint    # lint ESLint
+```
+
 # Sujet
 
 
-## L'objectif: Afficher des évenements sur un calendrier. 
+## L'objectif : afficher et ajouter des événements sur un calendrier journalier (vue "jour")
 
-La position relative des événements se calcule en en fonction de la bordure supérieure de la fenêtre, l'heure et la durée des événements.
-Par exemple : si le calendrier va de 00:00 à 24:00 et que l'écran est de 2400px de haut, un événement commençant à 12h00 et durant 1h sera positionné à 1200px du haut de l'écran et aura une hauteur de 100px.
+L'application affiche les événements d'une journée sur une grille horaire allant de 09h00 à 21h00
+(`DAY_START_HOUR`/`DAY_END_HOUR`). La position verticale et la hauteur d'un événement se calculent
+en fonction de la bordure supérieure de la grille, de son heure de début et de sa durée : par exemple,
+sur une grille de 09h00 à 21h00 affichée sur 1200px de haut, un événement commençant à 12h00 et durant
+1h occupera 100px de haut, positionné à 300px du haut de la grille.
+
+En plus de la visualisation, il est possible d'**ajouter un nouvel événement** via un formulaire
+(titre, date, heure de début, durée) ouvert dans une boîte de dialogue ; le nouvel événement est
+immédiatement positionné sur la grille avec le reste des événements du jour, chevauchements inclus.
 
 ___
 ## Chevauchement d'évenements
@@ -29,34 +67,44 @@ ___
 
 ## Input
 
-L'input fournie dans ce repository est un tableau d'évenements ayant lieu le même jour (à des heures différentes)
+Les événements affichés au chargement proviennent de
+[`assets/input.json`](rendering-events/src/assets/input.json), chargé par
+[`EventService`](rendering-events/src/app/services/event.service.ts). Chaque événement a la forme
+suivante ([`EventRaw`](rendering-events/src/app/models/event.model.ts)) :
 
-
-```javascript
+```typescript
 {
   id: 1,
-  start: '15:00', // The event starts at 03:00 pm
-  duration: 90 // The duration is expressed in minutes
+  title: 'Point équipe', // optionnel
+  date: '2026-09-02', // 'YYYY-MM-DD'
+  start: '15:00', // heure de début, 'HH:MM'
+  duration: 90 // durée en minutes
 }
 ```
+
+Un événement créé via le formulaire d'ajout produit la même forme (un `id` est généré côté client).
+
 ___
 
 ## Output
 
+Les événements du jour sont affichés dans un conteneur couvrant toute la fenêtre. Le haut du
+conteneur représente 09h00, le bas représente 21h00.
 
-Votre code devrait afficher les événements sur une page Web dans un conteneur couvrant toute la fenêtre.
-Le haut de la page représente 09h00. Le bas de la page représente 21h00.
+Les événements sont représentés sous forme de `div` avec une couleur de fond et une bordure de 1px.
 
-Les événements devraient être représentés sous forme de `div` avec une couleur de fond et une bordure de 1px.
+L'id de l'événement est présent dans le contenu de la `div` (ainsi que le titre et l'horaire), et
+dans son attribut `id` (sous la forme `event-<id>`) afin d'être identifiable.
 
-L'id de l'évenement doit être présent dans le contenu de la `div`, ainsi que dans son attribut `id` afin d'être validé par notre pipeline de test.
-
-Votre implémentation devrait être responsive (c'est-à-dire répondre aux événements `resize` de la fenêtre).
+L'affichage est responsive : le repositionnement des événements répond aux événements `resize` de
+la fenêtre.
 
 ___
 ## ⚠️ Dépendances ⚠️
 
-Utiliser React (ou autre framework front équivalent). **Aucune autre librairie** qui ne soit pas purement utilitaire (ex: lodash) ou purement axée graphique / templating (ex: material UI)
+Le sujet initial imposait React (ou un framework front équivalent) et interdisait toute librairie
+non purement utilitaire (ex: lodash) ou non purement graphique/templating (ex: material UI).
+Ce projet a été implémenté avec **Angular** + **Angular Material**, qui respecte cette contrainte.
 
 
 ![calendar version outlook](media-assets/calendar.png)
