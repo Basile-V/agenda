@@ -22,10 +22,10 @@ describe('EventService', () => {
 
   afterEach(() => httpMock.verify());
 
-  it('loadEvents parses startMinutes and endMinutes', (done) => {
+  it('loadEvents requests the given date and parses startMinutes and endMinutes', (done) => {
     const mock = [{ id: 7, date: '2026-08-26', start: '09:30', duration: 30 }];
 
-    service.loadEvents().subscribe((list) => {
+    service.loadEvents('2026-08-26').subscribe((list) => {
       expect(list.length).toBeGreaterThan(0);
       const e = list[0];
       expect(e.startMinutes).toBe(9 * 60 + 30);
@@ -33,7 +33,8 @@ describe('EventService', () => {
       done();
     });
 
-    const req = httpMock.expectOne('assets/input.json');
+    const req = httpMock.expectOne('http://localhost:8080/api/events?date=2026-08-26');
+    expect(req.request.method).toBe('GET');
     req.flush(mock);
   });
 });
