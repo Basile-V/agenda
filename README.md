@@ -8,9 +8,12 @@ d'un jour donné et en créer de nouveaux.
 
 - Java 25
 - Spring Boot 4.1.1 (`spring-boot-starter-webmvc`)
+- Spring Data JPA + H2 (persistance, base fichier en local)
+- Liquibase (migrations de schéma + données de seed)
+- Bean Validation (`spring-boot-starter-validation`)
 - Maven (wrapper fourni : `mvnw`)
 - Lombok
-- Tests : JUnit / Spring Test (`spring-boot-starter-webmvc-test`)
+- Tests : JUnit / AssertJ / Mockito / Spring Test (`spring-boot-starter-webmvc-test`)
 
 ## Lancer le projet en local
 
@@ -20,7 +23,10 @@ Prérequis : JDK 25.
 ./mvnw spring-boot:run
 ```
 
-L'API est ensuite accessible sur `http://localhost:8080`.
+L'API est ensuite accessible sur `http://localhost:8080`. Au premier démarrage, Liquibase crée le
+schéma et insère des événements de démonstration (aujourd'hui / hier / demain) dans une base H2
+fichier (`./data/calendar.mv.db`, ignorée par Git — se re-génère automatiquement, à supprimer
+sans risque pour repartir d'une base vide).
 
 Autres commandes utiles :
 
@@ -29,8 +35,8 @@ Autres commandes utiles :
 ./mvnw package  # build du jar
 ```
 
-Le frontend (`rendering-events/`, Angular, `http://localhost:4200`) doit pouvoir appeler cette API
-en local : penser à configurer le CORS pour autoriser `http://localhost:4200` en dev.
+Le frontend (`rendering-events/`, Angular, `http://localhost:4200`) appelle cette API en local ;
+le CORS est déjà configuré pour autoriser cette origine (voir `infrastructure.in.web.WebConfig`).
 
 ## Architecture : hexagonale (ports & adapters)
 
@@ -45,46 +51,49 @@ validation d'un événement, éventuellement le calcul de positionnement / cheva
 devait un jour être vérifié côté serveur) totalement indépendant des détails techniques :
 
 - le domaine ne connaît ni Spring, ni JPA, ni le format JSON exposé sur le réseau ;
-- la persistance (aujourd'hui potentiellement un simple stockage en mémoire ou un fichier JSON,
-  demain une vraie base de données) est un détail d'implémentation interchangeable derrière un
-  port ;
+- la persistance (aujourd'hui H2 via Spring Data JPA, potentiellement une autre base demain) est
+  un détail d'implémentation interchangeable derrière un port ;
 - le domaine est testable unitairement sans contexte Spring ni base de données ;
 - l'API REST n'est qu'un adaptateur d'entrée parmi d'autres possibles.
 
 C'est le bon niveau de rigueur pour un projet mono-domaine appelé à évoluer (nouvelles règles
 métier, changement de stockage) sans jamais justifier un découpage en services séparés.
 
-### Structure de packages proposée
+### Structure de packages
 
 ```
 com.basile.calendar
 ├── domain
-│   ├── model            // Event, VOs (EventTime, Duration...), règles métier
+│   ├── model                        // Event (record), exceptions métier
 │   └── port
-│       ├── in            // ports d'entrée : use cases (ex: ListEventsForDay, CreateEvent)
-│       └── out           // ports de sortie (ex: EventRepository)
+│       ├── in                       // ports d'entrée : CreateEvent, ListEventsForDay
+│       └── out                      // port de sortie : EventRepository
 ├── application
-│   └── service           // implémentations des use cases (ports "in"), orchestration
+│   └── service                      // CreateEventService, ListEventsForDayService
 └── infrastructure
     ├── in
-    │   └── web            // contrôleurs REST, DTOs (EventRequest/EventResponse), mapping, CORS
+    │   └── web                      // EventController, EventRequest/EventResponse, WebConfig (CORS)
     └── out
-        └── persistence    // implémentation(s) du port EventRepository (mémoire, JPA, ...)
+        └── persistence              // JpaEventRepository (port), EventEntity, SpringDataEventRepository
 ```
 
 Le sens des dépendances va toujours de `infrastructure` vers `application`/`domain`, jamais
 l'inverse : le domaine ne dépend de rien.
 
-### API (proposition, alignée sur le contrat frontend)
+Les migrations de schéma et les données de seed vivent dans
+`src/main/resources/db/changelog/` (YAML). Le changeset de seed est isolé derrière un contexte
+Liquibase dédié (`seed`), actif uniquement au run réel — jamais en test, pour ne pas fausser les
+assertions sur les dates.
 
-Le frontend charge aujourd'hui ses événements depuis `assets/input.json`
-(forme `EventRaw` : `id`, `title?`, `date` (`YYYY-MM-DD`), `start` (`HH:MM`), `duration` en
-minutes). Le backend expose le même contrat :
+### API
 
-| Méthode | Endpoint                        | Description                              |
-|---------|----------------------------------|-------------------------------------------|
-| `GET`   | `/api/events?date=YYYY-MM-DD`   | Liste des événements pour une journée     |
-| `POST`  | `/api/events`                   | Création d'un événement (id généré côté serveur) |
+Le frontend charge ses événements sous la forme `EventRaw` : `id`, `title?`, `date` (`YYYY-MM-DD`),
+`start` (`HH:MM`), `duration` en minutes. Le backend expose le même contrat :
+
+| Méthode | Endpoint                      | Description                                      |
+|---------|--------------------------------|---------------------------------------------------|
+| `GET`   | `/api/events?date=YYYY-MM-DD` | Liste des événements pour une journée              |
+| `POST`  | `/api/events`                 | Création d'un événement (id généré côté serveur)   |
 
 Corps `POST` / réponse (identique à `EventRaw`) :
 
@@ -100,6 +109,6 @@ Corps `POST` / réponse (identique à `EventRaw`) :
 
 ## Prochaines étapes
 
-- Scaffolder les packages `domain` / `application` / `infrastructure` ci-dessus.
-- Définir le port `EventRepository` et une première implémentation en mémoire.
-- Implémenter les contrôleurs REST + configuration CORS pour `http://localhost:4200`.
+- Endpoints de modification/suppression d'un événement (`PUT`/`DELETE`) si le besoin apparaît côté
+  frontend.
+- Implémenter l'identification

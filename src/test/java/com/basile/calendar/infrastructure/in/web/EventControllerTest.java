@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.basile.calendar.domain.model.Event;
+import com.basile.calendar.domain.model.exception.InvalidEventDurationException;
 import com.basile.calendar.domain.port.in.CreateEvent;
 import com.basile.calendar.domain.port.in.ListEventsForDay;
 import java.time.LocalDate;
@@ -83,5 +84,23 @@ class EventControllerTest {
                                 }
                                 """))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void should_return_bad_request_with_message_when_domain_rule_is_violated() throws Exception {
+        when(createEvent.create(any(Event.class))).thenThrow(new InvalidEventDurationException(90));
+
+        mockMvc.perform(post("/api/events")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "date": "2026-09-02",
+                                  "start": "15:00",
+                                  "duration": 90
+                                }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message")
+                        .value("La durée d'un événement doit être strictement positive, reçu : 90"));
     }
 }
