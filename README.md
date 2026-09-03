@@ -13,6 +13,7 @@ d'un jour donné et en créer de nouveaux.
 - Bean Validation (`spring-boot-starter-validation`)
 - Maven (wrapper fourni : `mvnw`)
 - Lombok
+- Springdoc OpenAPI / Swagger UI (documentation API interactive)
 - Tests : JUnit / AssertJ / Mockito / Spring Test (`spring-boot-starter-webmvc-test`)
 
 ## Lancer le projet en local
@@ -106,6 +107,16 @@ Corps `POST` / réponse (identique à `EventRaw`) :
   "duration": 90
 }
 ```
+
+### Documentation Swagger / OpenAPI
+
+L'API est documentée automatiquement (à partir des `@RestController` et DTOs) via Springdoc
+OpenAPI, accessible une fois l'application lancée :
+
+| Ressource            | URL                                          |
+|-----------------------|-----------------------------------------------|
+| Swagger UI            | `http://localhost:8080/swagger-ui.html`       |
+| Spécification OpenAPI (JSON) | `http://localhost:8080/v3/api-docs`     |
 
 ## Prochaines étapes
 
