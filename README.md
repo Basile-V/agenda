@@ -67,19 +67,27 @@ ___
 
 ## Input
 
-Les événements affichés au chargement proviennent de
-[`assets/input.json`](rendering-events/src/assets/input.json), chargé par
-[`EventService`](rendering-events/src/app/services/event.service.ts). Chaque événement a la forme
-suivante ([`EventRaw`](rendering-events/src/app/models/event.model.ts)) :
+Les événements du jour sélectionné sont récupérés auprès d'un backend REST par
+[`EventService`](rendering-events/src/app/services/event.service.ts), via :
+
+```
+GET http://localhost:8080/api/events?date=2026-09-02
+```
+
+Un backend doit donc tourner en local sur le port `8080` pour que l'application affiche des
+événements. La réponse attendue est un tableau d'événements de la forme suivante
+([`EventRaw`](rendering-events/src/app/models/event.model.ts)) :
 
 ```typescript
-{
-  id: 1,
-  title: 'Point équipe', // optionnel
-  date: '2026-09-02', // 'YYYY-MM-DD'
-  start: '15:00', // heure de début, 'HH:MM'
-  duration: 90 // durée en minutes
-}
+[
+  {
+    id: 1,
+    title: 'Point équipe', // optionnel
+    date: '2026-09-02', // 'YYYY-MM-DD'
+    start: '15:00', // heure de début, 'HH:MM'
+    duration: 90 // durée en minutes
+  }
+]
 ```
 
 Un événement créé via le formulaire d'ajout produit la même forme (un `id` est généré côté client).
