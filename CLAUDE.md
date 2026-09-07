@@ -24,6 +24,9 @@ Règles pratiques :
   du port, pas l'implémentation.
 - Mockito uniquement aux frontières (pour substituer un port dans un test de use case), jamais
   pour mocker le domaine lui-même.
+- Style Mockito : `@ExtendWith(MockitoExtension.class)` + champs `@Mock`, plutôt que des appels
+  manuels à `mock(...)`, pour les tests d'use case (moins de boilerplate, détection des stubs
+  inutilisés par Mockito).
 - Un bug corrigé commence par un test qui le reproduit.
 
 ## Principes SOLID
