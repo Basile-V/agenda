@@ -11,6 +11,7 @@ d'un jour donné et en créer de nouveaux.
 - Spring Data JPA + H2 (persistance, base fichier en local)
 - Liquibase (migrations de schéma + données de seed)
 - Bean Validation (`spring-boot-starter-validation`)
+- Spring Security (`spring-boot-starter-security`) + JJWT (JWT stateless en cookies httpOnly)
 - Maven (wrapper fourni : `mvnw`)
 - Lombok
 - Springdoc OpenAPI / Swagger UI (documentation API interactive)
@@ -65,26 +66,29 @@ métier, changement de stockage) sans jamais justifier un découpage en services
 ```
 com.basile.calendar
 ├── domain
-│   ├── model                        // Event (record), exceptions métier
+│   ├── model                        // Event, User, AuthenticatedUser, AuthSession (records), exceptions métier
 │   └── port
-│       ├── in                       // ports d'entrée : CreateEvent, ListEventsForDay
-│       └── out                      // port de sortie : EventRepository
+│       ├── in                       // ports d'entrée : CreateEvent, ListEventsForDay, Login, RefreshSession
+│       └── out                      // ports de sortie : EventRepository, UserRepository, PasswordHasher, TokenProvider
 ├── application
-│   └── service                      // CreateEventService, ListEventsForDayService
+│   └── service                      // CreateEventService, ListEventsForDayService, LoginService, RefreshSessionService
 └── infrastructure
     ├── in
-    │   └── web                      // EventController, EventRequest/EventResponse, WebConfig (CORS)
+    │   └── web                      // EventController, AuthController, SecurityConfig, JwtAuthenticationFilter, ...
     └── out
-        └── persistence              // JpaEventRepository (port), EventEntity, SpringDataEventRepository
+        ├── persistence              // JpaEventRepository, JpaUserRepository (ports), entités, repositories Spring Data
+        └── security                 // JwtTokenProvider, BCryptPasswordHasher (implémentations des ports out)
 ```
 
 Le sens des dépendances va toujours de `infrastructure` vers `application`/`domain`, jamais
 l'inverse : le domaine ne dépend de rien.
 
 Les migrations de schéma et les données de seed vivent dans
-`src/main/resources/db/changelog/` (YAML). Le changeset de seed est isolé derrière un contexte
-Liquibase dédié (`seed`), actif uniquement au run réel — jamais en test, pour ne pas fausser les
-assertions sur les dates.
+`src/main/resources/db/changelog/` (YAML). Le changeset de seed des événements est isolé derrière
+un contexte Liquibase dédié (`seed`), actif uniquement au run réel — jamais en test, pour ne pas
+fausser les assertions sur les dates. Le seed des utilisateurs de démo n'a pas cette contrainte
+(pas de dépendance à la date du jour) et tourne donc aussi en test, ce qui permet des tests
+d'intégration réalistes sur le flux d'authentification.
 
 ### API
 
@@ -108,6 +112,35 @@ Corps `POST` / réponse (identique à `EventRaw`) :
 }
 ```
 
+### Authentification
+
+L'API est protégée par une authentification par cookies httpOnly (JWT stateless, aucune session ni
+refresh token stocké côté serveur) :
+
+| Méthode | Endpoint            | Description                                                              |
+|---------|----------------------|---------------------------------------------------------------------------|
+| `POST`  | `/api/auth/login`   | Authentifie `{ username, password }`, pose les cookies et renvoie le profil |
+| `GET`   | `/api/auth/me`      | Profil de l'utilisateur courant (401 si non authentifié)                  |
+| `POST`  | `/api/auth/refresh` | Renouvelle le cookie `access_token` à partir du cookie `refresh_token`     |
+| `POST`  | `/api/auth/logout`  | Efface les cookies côté client (aucun état à invalider côté serveur)      |
+
+Détails du contrat :
+
+- `access_token` (httpOnly, `Path=/`, courte durée de vie — `app.jwt.access-token-ttl`) et
+  `refresh_token` (httpOnly, `Path=/api/auth`, longue durée de vie — `app.jwt.refresh-token-ttl`)
+  sont deux JWT signés indépendants (un claim `type` interne empêche d'utiliser l'un à la place de
+  l'autre) ; aucun n'est jamais renvoyé dans le corps JSON des réponses.
+- Un cookie `XSRF-TOKEN` non httpOnly est posé sur chaque requête (`CookieCsrfTokenRepository`) ;
+  le frontend doit renvoyer sa valeur dans l'en-tête `X-XSRF-TOKEN` sur toute requête mutante
+  (double-submit CSRF), sans quoi la requête est rejetée en 403.
+- CORS autorise uniquement l'origine `app.cors.allowed-origin` (`http://localhost:4200` par
+  défaut) avec `Access-Control-Allow-Credentials: true` — indispensable pour que les cookies
+  passent en cross-origin depuis Angular (`withCredentials: true` côté client).
+- Le secret de signature JWT (`app.jwt.secret`) est surchargeable par la variable d'environnement
+  `JWT_SECRET` ; ne jamais garder la valeur par défaut en production.
+- Deux utilisateurs de démonstration sont seedés (mot de passe `demo1234`) : `admin` (rôle `ADMIN`)
+  et `basile` (rôle `USER`).
+
 ### Documentation Swagger / OpenAPI
 
 L'API est documentée automatiquement (à partir des `@RestController` et DTOs) via Springdoc
@@ -122,4 +155,5 @@ OpenAPI, accessible une fois l'application lancée :
 
 - Endpoints de modification/suppression d'un événement (`PUT`/`DELETE`) si le besoin apparaît côté
   frontend.
-- Implémenter l'identification
+- Endpoint d'inscription / gestion des utilisateurs si le besoin apparaît (aujourd'hui, les
+  utilisateurs sont uniquement seedés via Liquibase).
