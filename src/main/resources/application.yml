@@ -18,3 +18,10 @@ spring:
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:this-is-a-dev-only-secret-please-override-it-with-a-32-byte-value-in-prod}
+    access-token-ttl: 15m
+    refresh-token-ttl: 7d
+    cookie-secure: false

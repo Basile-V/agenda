@@ -12,3 +12,10 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
     contexts: "!seed"
+
+app:
+  jwt:
+    secret: test-secret-key-not-for-production-use-32-bytes-minimum-required
+    access-token-ttl: 15m
+    refresh-token-ttl: 7d
+    cookie-secure: false
