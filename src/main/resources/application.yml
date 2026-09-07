@@ -25,3 +25,5 @@ app:
     access-token-ttl: 15m
     refresh-token-ttl: 7d
     cookie-secure: false
+  cors:
+    allowed-origin: http://localhost:4200

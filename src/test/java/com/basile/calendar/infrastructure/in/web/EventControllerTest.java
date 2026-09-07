@@ -11,17 +11,20 @@ import com.basile.calendar.domain.model.Event;
 import com.basile.calendar.domain.model.exception.InvalidEventDurationException;
 import com.basile.calendar.domain.port.in.CreateEvent;
 import com.basile.calendar.domain.port.in.ListEventsForDay;
+import com.basile.calendar.domain.port.out.TokenProvider;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(EventController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class EventControllerTest {
 
     @Autowired
@@ -32,6 +35,9 @@ class EventControllerTest {
 
     @MockitoBean
     private ListEventsForDay listEventsForDay;
+
+    @MockitoBean
+    private TokenProvider tokenProvider;
 
     @Test
     void should_return_events_for_given_date_when_listing() throws Exception {
