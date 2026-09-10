@@ -1,5 +1,6 @@
 package com.basile.calendar.infrastructure.in.web;
 
+import com.basile.calendar.infrastructure.out.security.JwtProperties;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +23,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 class SecurityConfig {
 
     private final CorsProperties corsProperties;
+    private final JwtProperties jwtProperties;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JsonAuthenticationEntryPoint authenticationEntryPoint;
     private final JsonAccessDeniedHandler accessDeniedHandler;
@@ -29,7 +31,7 @@ class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .csrf(csrf -> csrf.csrfTokenRepository(csrfTokenRepository())
                         .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
                         .ignoringRequestMatchers("/api/auth/login", "/api/auth/refresh", "/h2-console/**"))
                 .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
@@ -53,6 +55,12 @@ class SecurityConfig {
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    private CookieCsrfTokenRepository csrfTokenRepository() {
+        CookieCsrfTokenRepository repository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+        repository.setCookieCustomizer(cookie -> cookie.secure(jwtProperties.cookieSecure()));
+        return repository;
     }
 
     private CorsConfigurationSource corsConfigurationSource() {

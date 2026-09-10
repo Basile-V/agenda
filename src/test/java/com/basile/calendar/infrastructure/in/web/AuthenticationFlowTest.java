@@ -179,4 +179,9 @@ class AuthenticationFlowTest {
                                 """))
                 .andExpect(status().isCreated());
     }
+
+    @Test
+    void should_set_non_secure_xsrf_token_cookie_even_when_request_is_perceived_as_secure() throws Exception {
+        mockMvc.perform(get("/api/auth/me").secure(true)).andExpect(cookie().secure("XSRF-TOKEN", false));
+    }
 }
