@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: 00004-seed-users
+      author: basile
+      changes:
+        - insert:
+            tableName: app_user
+            columns:
+              - column: { name: id, valueNumeric: 1 }
+              - column: { name: username, value: admin }
+              - column: { name: password_hash, value: "$2a$10$GBiN3MQlggAQ1dpn/0mOHOeAkiTnpNbhG8k63InO48j3Nfrl/HQ36" }
+              - column: { name: display_name, value: Administrateur }
+              - column: { name: role, value: ADMIN }
+        - insert:
+            tableName: app_user
+            columns:
+              - column: { name: id, valueNumeric: 2 }
+              - column: { name: username, value: basile }
+              - column: { name: password_hash, value: "$2a$10$qrraumqT5nhV7DM0lqqaeubrbMbxdk4QpyBXI9rWAC6tESXsCxsX6" }
+              - column: { name: display_name, value: Basile }
+              - column: { name: role, value: USER }
+        - sql:
+            sql: ALTER TABLE app_user ALTER COLUMN id RESTART WITH 3
