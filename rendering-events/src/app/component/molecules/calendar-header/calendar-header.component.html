@@ -8,4 +8,8 @@
     <app-button [message]="todayButton" [action]="setToday"></app-button>
     <app-icon [icon]="iconRight" [action]="setNextDay"></app-icon>
   </div>
+  <div id="logout">
+    <span class="user">{{ currentUser()?.displayName }}</span>
+    <app-icon class="logout-icon" [icon]="iconLogout" [action]="logout"></app-icon>
+  </div>
 </div>
