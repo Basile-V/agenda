@@ -1,0 +1,24 @@
+<div
+  class="event"
+  [id]="'event-' + (event()?.id ?? '')"
+  [style.top.px]="event()?.top"
+  [style.height.px]="event()?.height"
+  [style.left.px]="event()?.left"
+  [style.width.px]="event()?.width"
+  role="button"
+  tabindex="0"
+  [attr.aria-label]="
+    'Event ' +
+    (event()?.id ?? '') +
+    ' starting ' +
+    (event()?.start ?? '') +
+    ' for ' +
+    (event()?.duration ?? '') +
+    ' minutes'
+  "
+>
+  <div class="event-label">
+    {{ event()?.title ?? event()?.id
+    }}<span class="event-time"> {{ event()?.start }} • {{ event()?.duration }}m</span>
+  </div>
+</div>

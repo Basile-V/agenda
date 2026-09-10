@@ -1,0 +1,15 @@
+<div #calendarHeader class="calendar-header">
+  <div id="day">
+    <div id="dayName">{{ dateSelected() | date: 'EEEE' }}</div>
+    <div id="dayNumber">{{ dateSelected() | date: 'd' }}</div>
+  </div>
+  <div id="navigate">
+    <app-icon [icon]="iconLeft" [action]="setPreviousDay"></app-icon>
+    <app-button [message]="todayButton" [action]="setToday"></app-button>
+    <app-icon [icon]="iconRight" [action]="setNextDay"></app-icon>
+  </div>
+  <div id="logout">
+    <span class="user">{{ currentUser()?.displayName }}</span>
+    <app-icon class="logout-icon" [icon]="iconLogout" [action]="logout"></app-icon>
+  </div>
+</div>

@@ -1,0 +1,16 @@
+<div #container class="calendar-container">
+  <div class="events-container">
+    @for (ev of layouted(); track ev.id) {
+      <app-event [event]="ev"></app-event>
+    }
+  </div>
+
+  <div class="time-slots-container" [style.height.px]="height()">
+    @for (hour of hours; track hour) {
+      <app-time-slot [hour]="hour" [height]="height() / hours.length - 1"></app-time-slot>
+    }
+  </div>
+  <div id="add-event">
+    <app-button [fab]="true" icon="add" ariaLabel="add event" [action]="() => openDialog()"></app-button>
+  </div>
+</div>
