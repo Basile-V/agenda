@@ -34,3 +34,6 @@ build/
 
 ### H2 ###
 /data/
+
+### macOS ###
+.DS_Store

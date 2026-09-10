@@ -1,8 +1,8 @@
 # Calendar — Backend
 
-Backend Java 25 / Spring Boot pour l'application **rendering-events** (agenda / vue journalière
-d'événements). Il expose une API REST consommée par le frontend Angular : lister les événements
-d'un jour donné et en créer de nouveaux.
+Backend Java 25 / Spring Boot pour l'application **agenda** (vue journalière d'événements). Il
+expose une API REST consommée par le frontend Angular : lister les événements d'un jour donné et
+en créer de nouveaux.
 
 ## Stack technique
 
@@ -37,7 +37,7 @@ Autres commandes utiles :
 ./mvnw package  # build du jar
 ```
 
-Le frontend (`rendering-events/`, Angular, `http://localhost:4200`) appelle cette API en local ;
+Le frontend (`Frontend/`, Angular, `http://localhost:4200`) appelle cette API en local ;
 le CORS est déjà configuré pour autoriser cette origine (voir `infrastructure.in.web.WebConfig`).
 
 ## Architecture : hexagonale (ports & adapters)
