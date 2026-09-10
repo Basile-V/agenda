@@ -11,19 +11,17 @@
 
 ## Lancer le projet en local
 
-Le code de l'application se trouve dans le dossier [`rendering-events/`](rendering-events).
-
 **Prérequis** : [Node.js](https://nodejs.org/) et npm installés.
 
 ```bash
-cd rendering-events
+cd Frontend
 npm install
 npm start
 ```
 
 L'application est ensuite accessible sur [http://localhost:4200](http://localhost:4200).
 
-Autres commandes utiles (à lancer depuis `rendering-events/`) :
+Autres commandes utiles (à lancer depuis `Frontend/`) :
 
 ```bash
 npm run build   # build de production
@@ -68,7 +66,7 @@ ___
 ## Input
 
 Les événements du jour sélectionné sont récupérés auprès d'un backend REST par
-[`EventService`](rendering-events/src/app/services/event.service.ts), via :
+[`EventService`](src/app/services/event.service.ts), via :
 
 ```
 GET http://localhost:8080/api/events?date=2026-09-02
@@ -76,7 +74,7 @@ GET http://localhost:8080/api/events?date=2026-09-02
 
 Un backend doit donc tourner en local sur le port `8080` pour que l'application affiche des
 événements. La réponse attendue est un tableau d'événements de la forme suivante
-([`EventRaw`](rendering-events/src/app/models/event.model.ts)) :
+([`EventRaw`](src/app/models/event.model.ts)) :
 
 ```typescript
 [
