@@ -16,7 +16,7 @@ databaseChangeLog:
             columns:
               - column: { name: id, valueNumeric: 2 }
               - column: { name: username, value: basile }
-              - column: { name: password_hash, value: "$2a$10$qrraumqT5nhV7DM0lqqaeubrbMbxdk4QpyBXI9rWAC6tESXsCxsX6" }
+              - column: { name: password_hash, value: "$2a$10$F5oxjim.f1gkL1.Va71LAOIDQiSxZpHNw74D9qhaGd5ynJ9UYtwCy" }
               - column: { name: display_name, value: Basile }
               - column: { name: role, value: USER }
         - sql:
