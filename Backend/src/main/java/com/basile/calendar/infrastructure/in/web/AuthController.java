@@ -5,6 +5,7 @@ import com.basile.calendar.domain.model.AuthenticatedUser;
 import com.basile.calendar.domain.model.exception.InvalidRefreshTokenException;
 import com.basile.calendar.domain.port.in.Login;
 import com.basile.calendar.domain.port.in.RefreshSession;
+import com.basile.calendar.domain.port.in.Register;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -23,12 +24,22 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final Login login;
+    private final Register register;
     private final RefreshSession refreshSession;
     private final AuthCookieFactory cookieFactory;
 
     @PostMapping("/login")
     public ResponseEntity<UserResponse> login(@Valid @RequestBody LoginRequest request) {
         AuthSession session = login.login(request.username(), request.password());
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookieFactory.accessTokenCookie(session.accessToken()).toString())
+                .header(HttpHeaders.SET_COOKIE, cookieFactory.refreshTokenCookie(session.refreshToken()).toString())
+                .body(UserResponse.from(session.user()));
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<UserResponse> register(@Valid @RequestBody RegisterRequest request) {
+        AuthSession session = register.register(request.username(), request.password(), request.displayName());
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookieFactory.accessTokenCookie(session.accessToken()).toString())
                 .header(HttpHeaders.SET_COOKIE, cookieFactory.refreshTokenCookie(session.refreshToken()).toString())

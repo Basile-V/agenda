@@ -22,6 +22,29 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 class SecurityConfig {
 
+    private static final String AUTH_LOGIN_PATH = "/api/auth/login";
+    private static final String AUTH_REGISTER_PATH = "/api/auth/register";
+    private static final String AUTH_REFRESH_PATH = "/api/auth/refresh";
+    private static final String AUTH_LOGOUT_PATH = "/api/auth/logout";
+    private static final String SWAGGER_UI_PATH = "/swagger-ui/**";
+    private static final String SWAGGER_UI_HTML_PATH = "/swagger-ui.html";
+    private static final String API_DOCS_PATH = "/v3/api-docs/**";
+    private static final String H2_CONSOLE_PATH = "/h2-console/**";
+
+    private static final String[] CSRF_EXEMPT_PATHS = {
+        AUTH_LOGIN_PATH, AUTH_REGISTER_PATH, AUTH_REFRESH_PATH, H2_CONSOLE_PATH
+    };
+    private static final String[] PUBLIC_PATHS = {
+        AUTH_LOGIN_PATH,
+        AUTH_REGISTER_PATH,
+        AUTH_REFRESH_PATH,
+        AUTH_LOGOUT_PATH,
+        SWAGGER_UI_PATH,
+        SWAGGER_UI_HTML_PATH,
+        API_DOCS_PATH,
+        H2_CONSOLE_PATH
+    };
+
     private final CorsProperties corsProperties;
     private final JwtProperties jwtProperties;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -33,18 +56,11 @@ class SecurityConfig {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.csrfTokenRepository(csrfTokenRepository())
                         .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
-                        .ignoringRequestMatchers("/api/auth/login", "/api/auth/refresh", "/h2-console/**"))
+                        .ignoringRequestMatchers(CSRF_EXEMPT_PATHS))
                 .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/api/auth/login",
-                                "/api/auth/refresh",
-                                "/api/auth/logout",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html",
-                                "/v3/api-docs/**",
-                                "/h2-console/**")
+                        .requestMatchers(PUBLIC_PATHS)
                         .permitAll()
                         .anyRequest()
                         .authenticated())

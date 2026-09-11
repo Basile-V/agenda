@@ -61,7 +61,10 @@ Le frontend est ensuite accessible sur `http://localhost:4200` et communique ave
 
 Authentification : le backend protège l'API par cookies httpOnly (JWT). Points importants :
 
-- Endpoints d'auth : `/api/auth/login`, `/api/auth/me`, `/api/auth/refresh`, `/api/auth/logout`
+- Endpoints d'auth : `/api/auth/login`, `/api/auth/register`, `/api/auth/me`, `/api/auth/refresh`, `/api/auth/logout`
+- `/api/auth/register` crée un compte (`{ username, password, displayName }`, rôle `USER`) et connecte
+  immédiatement l'utilisateur (mêmes cookies posés qu'un login) ; le frontend expose un écran dédié
+  (`/register`, lié depuis l'écran de connexion) pour les utilisateurs qui n'ont pas encore de compte.
 - Les cookies `access_token` et `refresh_token` sont httpOnly ; un cookie `XSRF-TOKEN` non httpOnly est fourni pour la protection CSRF.
 - Deux comptes de démonstration sont seedés : `admin` / `demo1234` (rôle `ADMIN`) et `basile` / `demo1234` (rôle `USER`).
 

@@ -54,6 +54,44 @@ class AuthenticationFlowTest {
     }
 
     @Test
+    void should_register_and_access_protected_resource_when_username_is_available() throws Exception {
+        MvcResult registerResult = mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "username": "new-user",
+                                  "password": "secretpwd",
+                                  "displayName": "New User"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value("new-user"))
+                .andExpect(cookie().httpOnly("access_token", true))
+                .andExpect(cookie().httpOnly("refresh_token", true))
+                .andReturn();
+
+        Cookie accessTokenCookie = registerResult.getResponse().getCookie("access_token");
+        assertThat(accessTokenCookie).isNotNull();
+
+        mockMvc.perform(get("/api/events").param("date", "2026-09-02").cookie(accessTokenCookie))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void should_reject_register_when_username_is_already_taken() throws Exception {
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "username": "basile",
+                                  "password": "secretpwd",
+                                  "displayName": "Basile"
+                                }
+                                """))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void should_reject_login_when_password_is_wrong() throws Exception {
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)

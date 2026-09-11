@@ -38,4 +38,16 @@ class JpaUserRepositoryTest {
 
         assertThat(found).isEmpty();
     }
+
+    @Test
+    void should_save_and_return_user_with_generated_id_when_saving_new_user() {
+        User saved = userRepository.save(User.draft("carol", "hashed-password", "Carol", Role.USER));
+
+        assertThat(saved.id()).isNotNull();
+        assertThat(saved.username()).isEqualTo("carol");
+        assertThat(saved.passwordHash()).isEqualTo("hashed-password");
+        assertThat(saved.displayName()).isEqualTo("Carol");
+        assertThat(saved.role()).isEqualTo(Role.USER);
+        assertThat(userRepository.findByUsername("carol")).isPresent();
+    }
 }

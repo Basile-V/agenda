@@ -12,8 +12,10 @@ import com.basile.calendar.domain.model.AuthenticatedUser;
 import com.basile.calendar.domain.model.Role;
 import com.basile.calendar.domain.model.exception.InvalidCredentialsException;
 import com.basile.calendar.domain.model.exception.InvalidRefreshTokenException;
+import com.basile.calendar.domain.model.exception.UsernameAlreadyExistsException;
 import com.basile.calendar.domain.port.in.Login;
 import com.basile.calendar.domain.port.in.RefreshSession;
+import com.basile.calendar.domain.port.in.Register;
 import com.basile.calendar.domain.port.out.TokenProvider;
 import com.basile.calendar.infrastructure.out.security.JwtProperties;
 import jakarta.servlet.http.Cookie;
@@ -43,6 +45,9 @@ class AuthControllerTest {
 
     @MockitoBean
     private Login login;
+
+    @MockitoBean
+    private Register register;
 
     @MockitoBean
     private RefreshSession refreshSession;
@@ -115,6 +120,81 @@ class AuthControllerTest {
                                 """))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.message").value("Identifiants invalides"));
+    }
+
+    @Test
+    void should_return_profile_and_set_auth_cookies_when_register_succeeds() throws Exception {
+        AuthenticatedUser user = new AuthenticatedUser(2L, "carol", "Carol", Role.USER);
+        when(register.register("carol", "secretpwd", "Carol"))
+                .thenReturn(new AuthSession(user, "access-token-value", "refresh-token-value"));
+
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "username": "carol",
+                                  "password": "secretpwd",
+                                  "displayName": "Carol"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(2))
+                .andExpect(jsonPath("$.username").value("carol"))
+                .andExpect(jsonPath("$.displayName").value("Carol"))
+                .andExpect(jsonPath("$.role").value("USER"))
+                .andExpect(header().stringValues("Set-Cookie",
+                        org.hamcrest.Matchers.hasItem(org.hamcrest.Matchers.allOf(
+                                org.hamcrest.Matchers.containsString("access_token=access-token-value"),
+                                org.hamcrest.Matchers.containsString("HttpOnly")))))
+                .andExpect(header().stringValues("Set-Cookie",
+                        org.hamcrest.Matchers.hasItem(org.hamcrest.Matchers.allOf(
+                                org.hamcrest.Matchers.containsString("refresh_token=refresh-token-value"),
+                                org.hamcrest.Matchers.containsString("Path=/api/auth")))));
+    }
+
+    @Test
+    void should_return_bad_request_when_register_fields_are_blank() throws Exception {
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "username": "",
+                                  "password": "",
+                                  "displayName": ""
+                                }
+                                """))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void should_return_bad_request_when_register_password_is_too_short() throws Exception {
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "username": "carol",
+                                  "password": "short",
+                                  "displayName": "Carol"
+                                }
+                                """))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void should_return_bad_request_when_register_username_already_exists() throws Exception {
+        when(register.register("basile", "secretpwd", "Basile")).thenThrow(new UsernameAlreadyExistsException());
+
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "username": "basile",
+                                  "password": "secretpwd",
+                                  "displayName": "Basile"
+                                }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Nom d'utilisateur déjà utilisé"));
     }
 
     @Test

@@ -68,10 +68,10 @@ com.basile.calendar
 ├── domain
 │   ├── model                        // Event, User, AuthenticatedUser, AuthSession (records), exceptions métier
 │   └── port
-│       ├── in                       // ports d'entrée : CreateEvent, ListEventsForDay, Login, RefreshSession
+│       ├── in                       // ports d'entrée : CreateEvent, ListEventsForDay, Login, Register, RefreshSession
 │       └── out                      // ports de sortie : EventRepository, UserRepository, PasswordHasher, TokenProvider
 ├── application
-│   └── service                      // CreateEventService, ListEventsForDayService, LoginService, RefreshSessionService
+│   └── service                      // CreateEventService, ListEventsForDayService, LoginService, RegisterService, RefreshSessionService
 └── infrastructure
     ├── in
     │   └── web                      // EventController, AuthController, SecurityConfig, JwtAuthenticationFilter, ...
@@ -117,15 +117,19 @@ Corps `POST` / réponse (identique à `EventRaw`) :
 L'API est protégée par une authentification par cookies httpOnly (JWT stateless, aucune session ni
 refresh token stocké côté serveur) :
 
-| Méthode | Endpoint            | Description                                                              |
-|---------|----------------------|---------------------------------------------------------------------------|
-| `POST`  | `/api/auth/login`   | Authentifie `{ username, password }`, pose les cookies et renvoie le profil |
-| `GET`   | `/api/auth/me`      | Profil de l'utilisateur courant (401 si non authentifié)                  |
-| `POST`  | `/api/auth/refresh` | Renouvelle le cookie `access_token` à partir du cookie `refresh_token`     |
-| `POST`  | `/api/auth/logout`  | Efface les cookies côté client (aucun état à invalider côté serveur)      |
+| Méthode | Endpoint             | Description                                                                |
+|---------|-----------------------|-----------------------------------------------------------------------------|
+| `POST`  | `/api/auth/login`    | Authentifie `{ username, password }`, pose les cookies et renvoie le profil |
+| `POST`  | `/api/auth/register` | Crée un compte `{ username, password, displayName }` (rôle `USER`), pose les cookies et renvoie le profil — comme un login immédiat après inscription |
+| `GET`   | `/api/auth/me`       | Profil de l'utilisateur courant (401 si non authentifié)                    |
+| `POST`  | `/api/auth/refresh`  | Renouvelle le cookie `access_token` à partir du cookie `refresh_token`       |
+| `POST`  | `/api/auth/logout`   | Efface les cookies côté client (aucun état à invalider côté serveur)        |
 
 Détails du contrat :
 
+- `/api/auth/register` refuse (400, `{ "message": "Nom d'utilisateur déjà utilisé" }`) un
+  `username` déjà pris, et exige un `password` d'au moins 8 caractères (Bean Validation) ; le mot
+  de passe est haché (BCrypt) avant persistance, jamais stocké en clair.
 - `access_token` (httpOnly, `Path=/`, courte durée de vie — `app.jwt.access-token-ttl`) et
   `refresh_token` (httpOnly, `Path=/api/auth`, longue durée de vie — `app.jwt.refresh-token-ttl`)
   sont deux JWT signés indépendants (un claim `type` interne empêche d'utiliser l'un à la place de
@@ -155,5 +159,3 @@ OpenAPI, accessible une fois l'application lancée :
 
 - Endpoints de modification/suppression d'un événement (`PUT`/`DELETE`) si le besoin apparaît côté
   frontend.
-- Endpoint d'inscription / gestion des utilisateurs si le besoin apparaît (aujourd'hui, les
-  utilisateurs sont uniquement seedés via Liquibase).

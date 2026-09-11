@@ -16,4 +16,9 @@ public class JpaUserRepository implements UserRepository {
     public Optional<User> findByUsername(String username) {
         return springDataUserRepository.findByUsername(username).map(UserEntity::toDomain);
     }
+
+    @Override
+    public User save(User user) {
+        return springDataUserRepository.save(UserEntity.fromDomain(user)).toDomain();
+    }
 }
