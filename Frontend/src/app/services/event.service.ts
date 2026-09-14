@@ -19,8 +19,10 @@ export class EventService {
       .pipe(map((list: EventRaw[]) => list.map((e: EventRaw) => this.parseEvent(e))));
   }
 
-  createEvent(raw: Omit<EventRaw, 'id'>): ParsedEvent {
-    return this.parseEvent({ id: Date.now(), ...raw });
+  createEvent(raw: Omit<EventRaw, 'id' | 'ownerId'>): Observable<ParsedEvent> {
+    return this.http
+      .post<EventRaw>(this.url, raw)
+      .pipe(map((created: EventRaw) => this.parseEvent(created)));
   }
 
   private parseEvent(e: EventRaw): ParsedEvent {

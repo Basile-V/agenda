@@ -41,8 +41,14 @@ sur une grille de 09h00 à 21h00 affichée sur 1200px de haut, un événement co
 1h occupera 100px de haut, positionné à 300px du haut de la grille.
 
 En plus de la visualisation, il est possible d'**ajouter un nouvel événement** via un formulaire
-(titre, date, heure de début, durée) ouvert dans une boîte de dialogue ; le nouvel événement est
-immédiatement positionné sur la grille avec le reste des événements du jour, chevauchements inclus.
+(titre, date, heure de début, durée, case à cocher « public ») ouvert dans une boîte de dialogue ;
+le nouvel événement est envoyé au backend puis positionné sur la grille avec le reste des
+événements du jour, chevauchements inclus.
+
+Chaque événement appartient à l'utilisateur qui l'a créé (authentification requise, voir
+[Backend/README.md](../Backend/README.md#authentification)). Un événement est par défaut privé
+(visible seulement par son créateur) ; cocher « public » le rend visible par tous les
+utilisateurs. Les événements publics des autres utilisateurs affichent un badge « Public ».
 
 ___
 ## Chevauchement d'évenements
@@ -73,7 +79,9 @@ GET http://localhost:8080/api/events?date=2026-09-02
 ```
 
 Un backend doit donc tourner en local sur le port `8080` pour que l'application affiche des
-événements. La réponse attendue est un tableau d'événements de la forme suivante
+événements ; l'utilisateur doit être authentifié (cookie de session posé par
+`/api/auth/login`). La réponse ne contient que les événements visibles par l'utilisateur courant
+(ses propres événements + les événements publics des autres). Sa forme
 ([`EventRaw`](src/app/models/event.model.ts)) :
 
 ```typescript
@@ -83,12 +91,17 @@ Un backend doit donc tourner en local sur le port `8080` pour que l'application 
     title: 'Point équipe', // optionnel
     date: '2026-09-02', // 'YYYY-MM-DD'
     start: '15:00', // heure de début, 'HH:MM'
-    duration: 90 // durée en minutes
+    duration: 90, // durée en minutes
+    ownerId: 2, // id de l'utilisateur créateur
+    isPublic: false // visible par tous les utilisateurs si true
   }
 ]
 ```
 
-Un événement créé via le formulaire d'ajout produit la même forme (un `id` est généré côté client).
+Un événement créé via le formulaire d'ajout est envoyé au backend via
+`POST http://localhost:8080/api/events` (`title`, `date`, `start`, `duration`, `isPublic`) ; le
+backend répond avec l'événement complet (`id` et `ownerId` générés côté serveur), au même format
+que ci-dessus.
 
 ___
 

@@ -11,8 +11,8 @@ describe('CalendarComponent (integration)', () => {
   let httpMock: HttpTestingController;
 
   const mockEvents: EventRaw[] = [
-    { id: 1, date: '2026-08-26', start: '10:00', duration: 30 },
-    { id: 2, date: '2026-08-26', start: '14:00', duration: 60 },
+    { id: 1, date: '2026-08-26', start: '10:00', duration: 30, ownerId: 2, isPublic: false },
+    { id: 2, date: '2026-08-26', start: '14:00', duration: 60, ownerId: 2, isPublic: true },
   ];
 
   beforeEach(waitForAsync(() => {

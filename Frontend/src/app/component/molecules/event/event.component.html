@@ -20,5 +20,8 @@
   <div class="event-label">
     {{ event()?.title ?? event()?.id
     }}<span class="event-time"> {{ event()?.start }} • {{ event()?.duration }}m</span>
+    @if (event()?.isPublic) {
+      <span class="event-public-badge" aria-label="Événement public">Public</span>
+    }
   </div>
 </div>

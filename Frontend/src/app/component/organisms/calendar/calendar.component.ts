@@ -98,8 +98,10 @@ export class CalendarComponent implements AfterViewInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        const newEvent = this.eventService.createEvent(result);
-        this.allEvents.update((events) => [...events, newEvent]);
+        this.eventService
+          .createEvent(result)
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe((newEvent) => this.allEvents.update((events) => [...events, newEvent]));
       }
     });
   }

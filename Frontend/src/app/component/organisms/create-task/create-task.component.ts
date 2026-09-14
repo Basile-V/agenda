@@ -5,6 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { toDateKey } from '../../../models/event.model';
 
 export interface CreateTaskDialogData {
@@ -19,6 +20,7 @@ export interface CreateTaskDialogData {
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatCheckboxModule,
   ],
   templateUrl: './create-task.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,6 +36,7 @@ export class CreateTaskComponent {
     date: [this.data?.date ?? toDateKey(new Date()), Validators.required],
     start: ['', [Validators.required, Validators.pattern(/^([01]\d|2[0-3]):[0-5]\d$/)]],
     duration: [30, [Validators.required, Validators.min(1)]],
+    isPublic: [false],
   });
 
   onNoClick(): void {

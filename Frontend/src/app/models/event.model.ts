@@ -4,6 +4,8 @@ export interface EventRaw {
   date: string; // 'YYYY-MM-DD'
   start: string; // 'HH:MM'
   duration: number; // minutes
+  ownerId: number;
+  isPublic: boolean;
 }
 
 export interface ParsedEvent extends EventRaw {
