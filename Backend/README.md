@@ -142,6 +142,10 @@ Détails du contrat :
   passent en cross-origin depuis Angular (`withCredentials: true` côté client).
 - Le secret de signature JWT (`app.jwt.secret`) est surchargeable par la variable d'environnement
   `JWT_SECRET` ; ne jamais garder la valeur par défaut en production.
+- Le flag `Secure` des cookies (`app.jwt.cookie-secure`) est surchargeable par la variable
+  d'environnement `COOKIE_SECURE` (`false` par défaut, pour le dev en HTTP local) ; le passer à
+  `true` dès qu'un déploiement sert l'API en HTTPS — sans quoi les cookies (et donc le mot de
+  passe envoyé au login, protégé uniquement par le chiffrement TLS) peuvent circuler en clair.
 - Deux utilisateurs de démonstration sont seedés (mot de passe `demo1234`) : `admin` (rôle `ADMIN`)
   et `basile` (rôle `USER`).
 
