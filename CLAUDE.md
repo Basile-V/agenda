@@ -24,5 +24,17 @@ simultanément, côté serveur comme côté client.
   détails vivent dans `Backend/CLAUDE.md` et `Frontend/CLAUDE.md`.
 - Avant de committer, lancer les vérifications du côté modifié : `./mvnw test` (Backend) et/ou
   `npm test` + `npm run lint` (Frontend) — voir README.md pour le détail des commandes.
-- Garder les trois README (racine, `Backend/`, `Frontend/`) synchronisés avec le code quand une
-  commande, un chemin ou un contrat d'API change.
+
+## Documentation — mettre à jour après chaque gros changement
+
+Après tout changement notable (nouvelle fonctionnalité, changement de contrat d'API, nouvelle
+dépendance/version de stack, changement des commandes de lancement/build, restructuration de
+dossiers), mettre à jour le(s) README impacté(s) **dans le même commit** que le changement :
+
+- Un changement qui touche seulement un côté (Backend ou Frontend) → mettre à jour son propre
+  `README.md` (voir la section Documentation de son `CLAUDE.md`).
+- Un changement qui touche l'un des points suivants → mettre à jour aussi ce `README.md` racine :
+  contrat d'API entre Backend et Frontend, ports/URLs, commandes de lancement globales, stack
+  technique globale, arborescence du dépôt.
+- Ne jamais laisser un README décrire un état du code qui n'existe plus (chemin renommé, commande
+  supprimée, endpoint changé) : un README obsolète est pire que pas de README.

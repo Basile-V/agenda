@@ -181,3 +181,20 @@ Règles à respecter pour que l'atomic design reste cohérent :
 Tous les composants sont désormais en `ChangeDetectionStrategy.OnPush` avec des signal
 inputs (`input()`/`input.required()`) plutôt que `@Input()` — à conserver comme standard
 pour tout nouveau composant.
+
+## Documentation — mettre à jour le README après chaque gros changement
+
+[README.md](README.md) doit rester le reflet exact de l'application. Mettre à jour la section
+concernée **dans le même commit** dès que l'un de ces changements arrive :
+
+- nouvelle fonctionnalité visible (nouvel écran, nouveau composant organism, nouvelle règle de
+  layout/chevauchement) → sections « Sujet » / « Output » ;
+- changement du contrat consommé auprès du backend (forme d'`EventRaw`, nouvel endpoint appelé,
+  changement d'URL/port) → section « Input » ;
+- nouvelle dépendance notable (Angular Material, une lib), changement de version Angular,
+  nouvelle commande npm → sections « Stack technique » / commandes ;
+- changement de structure de dossiers (`component/`, `models/`, `services/`, `utils/`) →
+  vérifier aussi la cohérence avec l'arborescence décrite plus haut dans ce fichier.
+
+Si le changement modifie aussi ce que le Backend doit savoir, ou le contrat d'API partagé, mettre
+à jour également le `README.md` racine (voir [sa section Documentation](../CLAUDE.md)).

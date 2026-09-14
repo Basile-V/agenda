@@ -152,3 +152,23 @@ projet :
 ./mvnw spring-boot:run   # démarrage local (http://localhost:8080)
 ./mvnw package           # build du jar
 ```
+
+## Documentation — mettre à jour le README après chaque gros changement
+
+[README.md](README.md) doit rester le reflet exact du code. Mettre à jour la section concernée
+**dans le même commit** dès que l'un de ces changements arrive :
+
+- nouvel endpoint, endpoint supprimé, ou changement de contrat (requête/réponse JSON, codes
+  d'erreur) → section « API » ;
+- nouvelle règle d'authentification, cookie, claim JWT, ou compte de démonstration seedé →
+  section « Authentification » ;
+- changement de package/couche dans l'architecture hexagonale (nouveau port, nouvel adaptateur,
+  déplacement de classe entre `domain`/`application`/`infrastructure`) → section « Structure de
+  packages » ;
+- nouvelle dépendance Maven notable, changement de version Java/Spring Boot, nouvelle commande
+  `mvnw` → sections « Stack technique » / « Commandes » ;
+- changement de migration Liquibase qui modifie le schéma ou les données de seed → mentionner
+  l'impact si le comportement décrit dans le README change (ex. nouveaux comptes seedés).
+
+Si le changement modifie aussi ce que le Frontend doit savoir (contrat d'API, port, CORS), mettre
+à jour également le `README.md` racine (voir [sa section Documentation](../CLAUDE.md)).
