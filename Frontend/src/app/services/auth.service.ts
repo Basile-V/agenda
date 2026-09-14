@@ -2,7 +2,7 @@ import { computed, Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError, of, tap } from 'rxjs';
-import { LoginCredentials, User } from '../models/auth.model';
+import { LoginCredentials, RegisterCredentials, User } from '../models/auth.model';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +18,12 @@ export class AuthService {
   login(credentials: LoginCredentials): Observable<User> {
     return this.http
       .post<User>(`${this.url}/login`, credentials, { withCredentials: true })
+      .pipe(tap((user) => this._currentUser.set(user)));
+  }
+
+  register(credentials: RegisterCredentials): Observable<User> {
+    return this.http
+      .post<User>(`${this.url}/register`, credentials, { withCredentials: true })
       .pipe(tap((user) => this._currentUser.set(user)));
   }
 

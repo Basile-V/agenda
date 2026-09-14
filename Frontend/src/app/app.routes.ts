@@ -5,7 +5,7 @@ export const routes: Routes = [
   {
     path: 'login',
     loadComponent: () =>
-      import('./component/organisms/login/login.component').then((m) => m.LoginComponent),
+      import('./component/pages/auth/auth.component').then((m) => m.AuthComponent),
   },
   {
     path: '',

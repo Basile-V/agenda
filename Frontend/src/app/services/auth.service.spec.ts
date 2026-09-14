@@ -37,6 +37,21 @@ describe('AuthService', () => {
     req.flush(user);
   });
 
+  it('register sets currentUser and sends credentials with withCredentials', (done) => {
+    service
+      .register({ username: 'alice', password: 'secretpwd', displayName: 'Alice' })
+      .subscribe(() => {
+        expect(service.currentUser()).toEqual(user);
+        expect(service.isAuthenticated()).toBeTrue();
+        done();
+      });
+
+    const req = httpMock.expectOne('http://localhost:8080/api/auth/register');
+    expect(req.request.method).toBe('POST');
+    expect(req.request.withCredentials).toBeTrue();
+    req.flush(user);
+  });
+
   it('restoreSession sets currentUser on success', (done) => {
     service.restoreSession().subscribe((result) => {
       expect(result).toEqual(user);
