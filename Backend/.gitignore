@@ -37,3 +37,6 @@ build/
 
 ### macOS ###
 .DS_Store
+
+### secrets ###
+.env.local.sh
