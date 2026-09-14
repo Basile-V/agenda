@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 00003-create-user-table
+      id: 00001-create-user-table
       author: basile
       changes:
         - createTable:

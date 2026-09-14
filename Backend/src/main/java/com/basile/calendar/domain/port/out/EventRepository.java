@@ -8,5 +8,5 @@ public interface EventRepository {
 
     Event save(Event event);
 
-    List<Event> findByDate(LocalDate date);
+    List<Event> findVisibleOnDate(LocalDate date, Long viewerId);
 }

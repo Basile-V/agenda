@@ -11,9 +11,10 @@ record EventRequest(
         String title,
         @NotNull LocalDate date,
         @NotNull @JsonFormat(pattern = "HH:mm") LocalTime start,
-        @Positive int duration) {
+        @Positive int duration,
+        Boolean isPublic) {
 
-    Event toDomain() {
-        return Event.draft(title, date, start, duration);
+    Event toDomain(Long ownerId) {
+        return Event.draft(title, date, start, duration, ownerId, Boolean.TRUE.equals(isPublic));
     }
 }

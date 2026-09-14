@@ -2,7 +2,9 @@
 
 Backend Java 25 / Spring Boot pour l'application **agenda** (vue journalière d'événements). Il
 expose une API REST consommée par le frontend Angular : lister les événements d'un jour donné et
-en créer de nouveaux.
+en créer de nouveaux. Chaque événement appartient à l'utilisateur qui l'a créé ; un événement peut
+en plus être marqué **public**, auquel cas il est visible par tous les utilisateurs authentifiés
+(un événement non public n'est visible que par son créateur).
 
 ## Stack technique
 
@@ -84,23 +86,42 @@ Le sens des dépendances va toujours de `infrastructure` vers `application`/`dom
 l'inverse : le domaine ne dépend de rien.
 
 Les migrations de schéma et les données de seed vivent dans
-`src/main/resources/db/changelog/` (YAML). Le changeset de seed des événements est isolé derrière
-un contexte Liquibase dédié (`seed`), actif uniquement au run réel — jamais en test, pour ne pas
-fausser les assertions sur les dates. Le seed des utilisateurs de démo n'a pas cette contrainte
-(pas de dépendance à la date du jour) et tourne donc aussi en test, ce qui permet des tests
-d'intégration réalistes sur le flux d'authentification.
+`src/main/resources/db/changelog/` (YAML), dans l'ordre d'exécution : création de la table
+utilisateurs, création de la table événements (avec la colonne `user_id`, clé étrangère vers
+`app_user`, et `is_public`), seed des utilisateurs de démo, seed des événements de démo. Le
+changeset de seed des événements est isolé derrière un contexte Liquibase dédié (`seed`), actif
+uniquement au run réel — jamais en test, pour ne pas fausser les assertions sur les dates. Le seed
+des utilisateurs de démo n'a pas cette contrainte (pas de dépendance à la date du jour) et tourne
+donc aussi en test, ce qui permet des tests d'intégration réalistes sur le flux d'authentification.
 
 ### API
 
 Le frontend charge ses événements sous la forme `EventRaw` : `id`, `title?`, `date` (`YYYY-MM-DD`),
-`start` (`HH:MM`), `duration` en minutes. Le backend expose le même contrat :
+`start` (`HH:MM`), `duration` en minutes, `ownerId`, `isPublic`. Le backend expose le même contrat :
 
 | Méthode | Endpoint                      | Description                                      |
 |---------|--------------------------------|---------------------------------------------------|
-| `GET`   | `/api/events?date=YYYY-MM-DD` | Liste des événements pour une journée              |
-| `POST`  | `/api/events`                 | Création d'un événement (id généré côté serveur)   |
+| `GET`   | `/api/events?date=YYYY-MM-DD` | Liste des événements visibles par l'utilisateur courant pour une journée (ses propres événements + les événements publics d'autres utilisateurs) |
+| `POST`  | `/api/events`                 | Création d'un événement (id et `ownerId` générés/déterminés côté serveur) |
 
-Corps `POST` / réponse (identique à `EventRaw`) :
+Toutes les routes `/api/events/**` nécessitent d'être authentifié (cookie `access_token`,
+voir la section Authentification ci-dessous). Le propriétaire (`ownerId`) d'un événement créé
+est **toujours** déterminé côté serveur à partir de l'utilisateur authentifié — un `ownerId` envoyé
+dans le corps de la requête `POST` est ignoré.
+
+Corps `POST` :
+
+```json
+{
+  "title": "Point équipe",
+  "date": "2026-09-02",
+  "start": "15:00",
+  "duration": 90,
+  "isPublic": false
+}
+```
+
+Réponse (`POST` et `GET`, identique à `EventRaw`) :
 
 ```json
 {
@@ -108,7 +129,9 @@ Corps `POST` / réponse (identique à `EventRaw`) :
   "title": "Point équipe",
   "date": "2026-09-02",
   "start": "15:00",
-  "duration": 90
+  "duration": 90,
+  "ownerId": 2,
+  "isPublic": false
 }
 ```
 

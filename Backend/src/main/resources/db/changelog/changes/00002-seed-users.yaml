@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 00004-seed-users
+      id: 00002-seed-users
       author: basile
       changes:
         - insert:

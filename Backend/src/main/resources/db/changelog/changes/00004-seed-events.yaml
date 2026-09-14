@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 00002-seed-events
+      id: 00004-seed-events
       author: basile
       context: seed
       changes:
@@ -11,6 +11,8 @@ databaseChangeLog:
               - column: { name: event_date, valueComputed: "DATEADD('DAY', -1, CURRENT_DATE)" }
               - column: { name: start_time, valueDate: "10:45:00" }
               - column: { name: duration_minutes, valueNumeric: 30 }
+              - column: { name: user_id, valueNumeric: 2 }
+              - column: { name: is_public, valueBoolean: false }
         - insert:
             tableName: event
             columns:
@@ -18,6 +20,8 @@ databaseChangeLog:
               - column: { name: event_date, valueComputed: "DATEADD('DAY', -1, CURRENT_DATE)" }
               - column: { name: start_time, valueDate: "17:00:00" }
               - column: { name: duration_minutes, valueNumeric: 60 }
+              - column: { name: user_id, valueNumeric: 2 }
+              - column: { name: is_public, valueBoolean: false }
         - insert:
             tableName: event
             columns:
@@ -25,6 +29,8 @@ databaseChangeLog:
               - column: { name: event_date, valueComputed: "DATEADD('DAY', -1, CURRENT_DATE)" }
               - column: { name: start_time, valueDate: "10:00:00" }
               - column: { name: duration_minutes, valueNumeric: 30 }
+              - column: { name: user_id, valueNumeric: 2 }
+              - column: { name: is_public, valueBoolean: false }
         - insert:
             tableName: event
             columns:
@@ -32,6 +38,8 @@ databaseChangeLog:
               - column: { name: event_date, valueComputed: "DATEADD('DAY', -1, CURRENT_DATE)" }
               - column: { name: start_time, valueDate: "11:50:00" }
               - column: { name: duration_minutes, valueNumeric: 20 }
+              - column: { name: user_id, valueNumeric: 2 }
+              - column: { name: is_public, valueBoolean: false }
         - insert:
             tableName: event
             columns:
@@ -39,6 +47,8 @@ databaseChangeLog:
               - column: { name: event_date, valueComputed: "DATEADD('DAY', -1, CURRENT_DATE)" }
               - column: { name: start_time, valueDate: "19:00:00" }
               - column: { name: duration_minutes, valueNumeric: 60 }
+              - column: { name: user_id, valueNumeric: 2 }
+              - column: { name: is_public, valueBoolean: false }
 
         - insert:
             tableName: event
@@ -47,6 +57,8 @@ databaseChangeLog:
               - column: { name: event_date, valueComputed: CURRENT_DATE }
               - column: { name: start_time, valueDate: "17:00:00" }
               - column: { name: duration_minutes, valueNumeric: 60 }
+              - column: { name: user_id, valueNumeric: 2 }
+              - column: { name: is_public, valueBoolean: false }
         - insert:
             tableName: event
             columns:
@@ -54,6 +66,8 @@ databaseChangeLog:
               - column: { name: event_date, valueComputed: CURRENT_DATE }
               - column: { name: start_time, valueDate: "17:00:00" }
               - column: { name: duration_minutes, valueNumeric: 120 }
+              - column: { name: user_id, valueNumeric: 2 }
+              - column: { name: is_public, valueBoolean: false }
         - insert:
             tableName: event
             columns:
@@ -61,6 +75,8 @@ databaseChangeLog:
               - column: { name: event_date, valueComputed: CURRENT_DATE }
               - column: { name: start_time, valueDate: "19:40:00" }
               - column: { name: duration_minutes, valueNumeric: 10 }
+              - column: { name: user_id, valueNumeric: 2 }
+              - column: { name: is_public, valueBoolean: false }
         - insert:
             tableName: event
             columns:
@@ -68,6 +84,8 @@ databaseChangeLog:
               - column: { name: event_date, valueComputed: CURRENT_DATE }
               - column: { name: start_time, valueDate: "15:00:00" }
               - column: { name: duration_minutes, valueNumeric: 20 }
+              - column: { name: user_id, valueNumeric: 2 }
+              - column: { name: is_public, valueBoolean: false }
         - insert:
             tableName: event
             columns:
@@ -75,6 +93,8 @@ databaseChangeLog:
               - column: { name: event_date, valueComputed: CURRENT_DATE }
               - column: { name: start_time, valueDate: "18:00:00" }
               - column: { name: duration_minutes, valueNumeric: 60 }
+              - column: { name: user_id, valueNumeric: 2 }
+              - column: { name: is_public, valueBoolean: false }
         - insert:
             tableName: event
             columns:
@@ -82,6 +102,8 @@ databaseChangeLog:
               - column: { name: event_date, valueComputed: CURRENT_DATE }
               - column: { name: start_time, valueDate: "10:25:00" }
               - column: { name: duration_minutes, valueNumeric: 35 }
+              - column: { name: user_id, valueNumeric: 2 }
+              - column: { name: is_public, valueBoolean: false }
 
         - insert:
             tableName: event
@@ -90,6 +112,8 @@ databaseChangeLog:
               - column: { name: event_date, valueComputed: "DATEADD('DAY', 1, CURRENT_DATE)" }
               - column: { name: start_time, valueDate: "09:00:00" }
               - column: { name: duration_minutes, valueNumeric: 45 }
+              - column: { name: user_id, valueNumeric: 2 }
+              - column: { name: is_public, valueBoolean: false }
         - insert:
             tableName: event
             columns:
@@ -97,6 +121,8 @@ databaseChangeLog:
               - column: { name: event_date, valueComputed: "DATEADD('DAY', 1, CURRENT_DATE)" }
               - column: { name: start_time, valueDate: "14:45:00" }
               - column: { name: duration_minutes, valueNumeric: 60 }
+              - column: { name: user_id, valueNumeric: 2 }
+              - column: { name: is_public, valueBoolean: false }
         - insert:
             tableName: event
             columns:
@@ -104,6 +130,8 @@ databaseChangeLog:
               - column: { name: event_date, valueComputed: "DATEADD('DAY', 1, CURRENT_DATE)" }
               - column: { name: start_time, valueDate: "19:20:00" }
               - column: { name: duration_minutes, valueNumeric: 10 }
+              - column: { name: user_id, valueNumeric: 2 }
+              - column: { name: is_public, valueBoolean: false }
         - insert:
             tableName: event
             columns:
@@ -111,6 +139,8 @@ databaseChangeLog:
               - column: { name: event_date, valueComputed: "DATEADD('DAY', 1, CURRENT_DATE)" }
               - column: { name: start_time, valueDate: "11:50:00" }
               - column: { name: duration_minutes, valueNumeric: 30 }
+              - column: { name: user_id, valueNumeric: 2 }
+              - column: { name: is_public, valueBoolean: false }
         - insert:
             tableName: event
             columns:
@@ -118,6 +148,8 @@ databaseChangeLog:
               - column: { name: event_date, valueComputed: "DATEADD('DAY', 1, CURRENT_DATE)" }
               - column: { name: start_time, valueDate: "11:40:00" }
               - column: { name: duration_minutes, valueNumeric: 40 }
+              - column: { name: user_id, valueNumeric: 2 }
+              - column: { name: is_public, valueBoolean: false }
         - insert:
             tableName: event
             columns:
@@ -125,6 +157,40 @@ databaseChangeLog:
               - column: { name: event_date, valueComputed: "DATEADD('DAY', 1, CURRENT_DATE)" }
               - column: { name: start_time, valueDate: "14:00:00" }
               - column: { name: duration_minutes, valueNumeric: 30 }
+              - column: { name: user_id, valueNumeric: 2 }
+              - column: { name: is_public, valueBoolean: false }
+
+        # Événements publics de démonstration, visibles par tous les utilisateurs
+        - insert:
+            tableName: event
+            columns:
+              - column: { name: id, valueNumeric: 18 }
+              - column: { name: title, value: "Point équipe (public)" }
+              - column: { name: event_date, valueComputed: CURRENT_DATE }
+              - column: { name: start_time, valueDate: "09:30:00" }
+              - column: { name: duration_minutes, valueNumeric: 30 }
+              - column: { name: user_id, valueNumeric: 1 }
+              - column: { name: is_public, valueBoolean: true }
+        - insert:
+            tableName: event
+            columns:
+              - column: { name: id, valueNumeric: 19 }
+              - column: { name: title, value: "Pot de départ (public)" }
+              - column: { name: event_date, valueComputed: "DATEADD('DAY', -1, CURRENT_DATE)" }
+              - column: { name: start_time, valueDate: "18:30:00" }
+              - column: { name: duration_minutes, valueNumeric: 45 }
+              - column: { name: user_id, valueNumeric: 1 }
+              - column: { name: is_public, valueBoolean: true }
+        - insert:
+            tableName: event
+            columns:
+              - column: { name: id, valueNumeric: 20 }
+              - column: { name: title, value: "Formation Angular (public)" }
+              - column: { name: event_date, valueComputed: "DATEADD('DAY', 1, CURRENT_DATE)" }
+              - column: { name: start_time, valueDate: "10:00:00" }
+              - column: { name: duration_minutes, valueNumeric: 90 }
+              - column: { name: user_id, valueNumeric: 1 }
+              - column: { name: is_public, valueBoolean: true }
 
         - sql:
-            sql: ALTER TABLE event ALTER COLUMN id RESTART WITH 18
+            sql: ALTER TABLE event ALTER COLUMN id RESTART WITH 21

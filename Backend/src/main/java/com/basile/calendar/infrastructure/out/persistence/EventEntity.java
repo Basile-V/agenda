@@ -35,11 +35,22 @@ class EventEntity {
 
     private int durationMinutes;
 
+    private Long userId;
+
+    private boolean isPublic;
+
     static EventEntity fromDomain(Event event) {
-        return new EventEntity(event.id(), event.title(), event.date(), event.start(), event.durationMinutes());
+        return new EventEntity(
+                event.id(),
+                event.title(),
+                event.date(),
+                event.start(),
+                event.durationMinutes(),
+                event.ownerId(),
+                event.isPublic());
     }
 
     Event toDomain() {
-        return new Event(id, title, date, start, durationMinutes);
+        return new Event(id, title, date, start, durationMinutes, userId, isPublic);
     }
 }

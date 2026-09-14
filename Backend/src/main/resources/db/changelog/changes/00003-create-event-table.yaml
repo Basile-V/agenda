@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 00001-create-event-table
+      id: 00003-create-event-table
       author: basile
       changes:
         - createTable:
@@ -29,5 +29,18 @@ databaseChangeLog:
               - column:
                   name: duration_minutes
                   type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_event_user
+                    references: app_user(id)
+              - column:
+                  name: is_public
+                  type: BOOLEAN
+                  defaultValueBoolean: false
                   constraints:
                     nullable: false

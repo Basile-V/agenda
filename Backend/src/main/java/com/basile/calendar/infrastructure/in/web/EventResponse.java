@@ -10,9 +10,18 @@ record EventResponse(
         String title,
         LocalDate date,
         @JsonFormat(pattern = "HH:mm") LocalTime start,
-        int duration) {
+        int duration,
+        Long ownerId,
+        boolean isPublic) {
 
     static EventResponse from(Event event) {
-        return new EventResponse(event.id(), event.title(), event.date(), event.start(), event.durationMinutes());
+        return new EventResponse(
+                event.id(),
+                event.title(),
+                event.date(),
+                event.start(),
+                event.durationMinutes(),
+                event.ownerId(),
+                event.isPublic());
     }
 }

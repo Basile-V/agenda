@@ -18,7 +18,7 @@ class CreateEventServiceTest {
 
     @Test
     void should_save_event_when_creating_valid_event() {
-        Event draft = Event.draft("Point équipe", LocalDate.of(2026, 9, 2), LocalTime.of(15, 0), 90);
+        Event draft = Event.draft("Point équipe", LocalDate.of(2026, 9, 2), LocalTime.of(15, 0), 90, 2L, false);
         Event saved = draft.withId(1L);
         when(eventRepository.save(draft)).thenReturn(saved);
 

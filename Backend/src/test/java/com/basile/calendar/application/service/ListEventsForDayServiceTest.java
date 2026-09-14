@@ -17,22 +17,23 @@ class ListEventsForDayServiceTest {
     private final ListEventsForDayService listEventsForDayService = new ListEventsForDayService(eventRepository);
 
     @Test
-    void should_return_events_for_given_date_when_events_exist() {
+    void should_return_visible_events_for_given_date_and_viewer_when_events_exist() {
         LocalDate date = LocalDate.of(2026, 9, 2);
-        Event event = Event.draft("Point équipe", date, LocalTime.of(15, 0), 90).withId(1L);
-        when(eventRepository.findByDate(date)).thenReturn(List.of(event));
+        Event event = Event.draft("Point équipe", date, LocalTime.of(15, 0), 90, 2L, false)
+                .withId(1L);
+        when(eventRepository.findVisibleOnDate(date, 2L)).thenReturn(List.of(event));
 
-        List<Event> result = listEventsForDayService.list(date);
+        List<Event> result = listEventsForDayService.list(date, 2L);
 
         assertThat(result).containsExactly(event);
     }
 
     @Test
-    void should_return_empty_list_when_no_events_for_date() {
+    void should_return_empty_list_when_no_events_visible_for_date() {
         LocalDate date = LocalDate.of(2026, 9, 2);
-        when(eventRepository.findByDate(date)).thenReturn(List.of());
+        when(eventRepository.findVisibleOnDate(date, 2L)).thenReturn(List.of());
 
-        List<Event> result = listEventsForDayService.list(date);
+        List<Event> result = listEventsForDayService.list(date, 2L);
 
         assertThat(result).isEmpty();
     }

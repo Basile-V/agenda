@@ -15,7 +15,7 @@ public class ListEventsForDayService implements ListEventsForDay {
     private final EventRepository eventRepository;
 
     @Override
-    public List<Event> list(LocalDate date) {
-        return eventRepository.findByDate(date);
+    public List<Event> list(LocalDate date, Long viewerId) {
+        return eventRepository.findVisibleOnDate(date, viewerId);
     }
 }

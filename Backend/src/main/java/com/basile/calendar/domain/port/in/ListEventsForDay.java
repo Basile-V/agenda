@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface ListEventsForDay {
 
-    List<Event> list(LocalDate date);
+    List<Event> list(LocalDate date, Long viewerId);
 }

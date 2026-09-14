@@ -20,8 +20,8 @@ public class JpaEventRepository implements EventRepository {
     }
 
     @Override
-    public List<Event> findByDate(LocalDate date) {
-        return springDataEventRepository.findByDate(date).stream()
+    public List<Event> findVisibleOnDate(LocalDate date, Long viewerId) {
+        return springDataEventRepository.findVisibleOnDate(date, viewerId).stream()
                 .map(EventEntity::toDomain)
                 .toList();
     }
