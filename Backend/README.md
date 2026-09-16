@@ -105,13 +105,15 @@ Le frontend charge ses événements sous la forme `EventRaw` : `id`, `title?`, `
 | `GET`   | `/api/events?date=YYYY-MM-DD` | Liste des événements visibles par l'utilisateur courant pour une journée (ses propres événements + les événements publics d'autres utilisateurs) |
 | `POST`  | `/api/events`                 | Création d'un événement (id et `ownerId` générés/déterminés côté serveur) |
 | `PUT`   | `/api/events/{id}`            | Modification d'un événement existant (titre, date, heure, durée, visibilité) |
+| `DELETE`| `/api/events/{id}`            | Suppression d'un événement existant (204, sans corps de réponse) |
 
 Toutes les routes `/api/events/**` nécessitent d'être authentifié (cookie `access_token`,
 voir la section Authentification ci-dessous). Le propriétaire (`ownerId`) d'un événement créé
 est **toujours** déterminé côté serveur à partir de l'utilisateur authentifié — un `ownerId` envoyé
-dans le corps de la requête `POST`/`PUT` est ignoré. `PUT /api/events/{id}` renvoie 404 si l'id est
-inconnu, et 403 si l'utilisateur authentifié n'est pas le propriétaire de l'événement (y compris
-pour un événement public : la visibilité n'accorde jamais le droit de modification).
+dans le corps de la requête `POST`/`PUT` est ignoré. `PUT` et `DELETE /api/events/{id}` renvoient
+404 si l'id est inconnu, et 403 si l'utilisateur authentifié n'est pas le propriétaire de
+l'événement (y compris pour un événement public : la visibilité n'accorde jamais le droit de
+modification ou de suppression).
 
 Corps `POST` (identique pour `PUT`) :
 
@@ -186,6 +188,3 @@ OpenAPI, accessible une fois l'application lancée :
 | Swagger UI            | `http://localhost:8080/swagger-ui.html`       |
 | Spécification OpenAPI (JSON) | `http://localhost:8080/v3/api-docs`     |
 
-## Prochaines étapes
-
-- Endpoint de suppression d'un événement (`DELETE`) si le besoin apparaît côté frontend.

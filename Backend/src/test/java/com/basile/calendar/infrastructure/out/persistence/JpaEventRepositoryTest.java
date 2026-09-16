@@ -83,4 +83,14 @@ class JpaEventRepositoryTest {
 
         assertThat(found).isEmpty();
     }
+
+    @Test
+    void should_remove_event_when_deleting_by_id() {
+        Event saved = eventRepository.save(
+                Event.draft("Point équipe", LocalDate.of(2026, 9, 2), LocalTime.of(15, 0), 90, 1L, false));
+
+        eventRepository.delete(saved.id());
+
+        assertThat(eventRepository.findById(saved.id())).isEmpty();
+    }
 }

@@ -71,6 +71,21 @@ class UpdateEventServiceTest {
     }
 
     @Test
+    void should_save_updated_event_when_owner_changes_only_the_start_time() {
+        Event existing = Event.draft("Point équipe", LocalDate.of(2026, 9, 2), LocalTime.of(15, 0), 90, 2L, false)
+                .withId(1L);
+        Event changes = Event.draft("Point équipe", LocalDate.of(2026, 9, 2), LocalTime.of(17, 30), 90, 2L, false);
+        Event expectedToSave = new Event(1L, "Point équipe", LocalDate.of(2026, 9, 2), LocalTime.of(17, 30), 90, 2L, false);
+        when(eventRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(eventRepository.save(expectedToSave)).thenReturn(expectedToSave);
+
+        Event result = updateEventService.update(1L, changes, 2L);
+
+        assertThat(result).isEqualTo(expectedToSave);
+        verify(eventRepository).save(expectedToSave);
+    }
+
+    @Test
     void should_save_updated_event_when_owner_updates_their_own_public_event() {
         Event existing = Event.draft("Point équipe", LocalDate.of(2026, 9, 2), LocalTime.of(15, 0), 90, 2L, true)
                 .withId(1L);

@@ -12,4 +12,6 @@ public interface EventRepository {
     List<Event> findVisibleOnDate(LocalDate date, Long viewerId);
 
     Optional<Event> findById(Long id);
+
+    void delete(Long id);
 }

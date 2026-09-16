@@ -31,4 +31,9 @@ public class JpaEventRepository implements EventRepository {
     public Optional<Event> findById(Long id) {
         return springDataEventRepository.findById(id).map(EventEntity::toDomain);
     }
+
+    @Override
+    public void delete(Long id) {
+        springDataEventRepository.deleteById(id);
+    }
 }

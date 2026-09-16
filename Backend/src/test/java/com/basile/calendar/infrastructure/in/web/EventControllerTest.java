@@ -1,7 +1,10 @@
 package com.basile.calendar.infrastructure.in.web;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -15,6 +18,7 @@ import com.basile.calendar.domain.model.exception.EventAccessDeniedException;
 import com.basile.calendar.domain.model.exception.EventNotFoundException;
 import com.basile.calendar.domain.model.exception.InvalidEventDurationException;
 import com.basile.calendar.domain.port.in.CreateEvent;
+import com.basile.calendar.domain.port.in.DeleteEvent;
 import com.basile.calendar.domain.port.in.ListEventsForDay;
 import com.basile.calendar.domain.port.in.UpdateEvent;
 import com.basile.calendar.domain.port.out.TokenProvider;
@@ -47,6 +51,9 @@ class EventControllerTest {
 
     @MockitoBean
     private UpdateEvent updateEvent;
+
+    @MockitoBean
+    private DeleteEvent deleteEvent;
 
     @MockitoBean
     private TokenProvider tokenProvider;
@@ -227,6 +234,30 @@ class EventControllerTest {
                                   "duration": 90
                                 }
                                 """))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void should_delete_event_when_requester_is_owner() throws Exception {
+        mockMvc.perform(delete("/api/events/1").principal(authenticationFor(2L)))
+                .andExpect(status().isNoContent());
+
+        verify(deleteEvent).delete(1L, 2L);
+    }
+
+    @Test
+    void should_return_not_found_when_deleting_unknown_event() throws Exception {
+        doThrow(new EventNotFoundException(404L)).when(deleteEvent).delete(404L, 2L);
+
+        mockMvc.perform(delete("/api/events/404").principal(authenticationFor(2L)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void should_return_forbidden_when_requester_is_not_owner_of_deleted_event() throws Exception {
+        doThrow(new EventAccessDeniedException(1L, 99L)).when(deleteEvent).delete(1L, 99L);
+
+        mockMvc.perform(delete("/api/events/1").principal(authenticationFor(99L)))
                 .andExpect(status().isForbidden());
     }
 }

@@ -5,12 +5,14 @@ import com.basile.calendar.domain.model.Event;
 import com.basile.calendar.domain.port.in.CreateEvent;
 import com.basile.calendar.domain.port.in.ListEventsForDay;
 import com.basile.calendar.domain.port.in.UpdateEvent;
+import com.basile.calendar.domain.port.in.DeleteEvent;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +31,8 @@ public class EventController {
     private final CreateEvent createEvent;
     private final ListEventsForDay listEventsForDay;
     private final UpdateEvent updateEvent;
+    private final DeleteEvent deleteEvent;
+
 
     @GetMapping
     public List<EventResponse> list(@RequestParam LocalDate date, Authentication authentication) {
@@ -52,5 +56,12 @@ public class EventController {
         AuthenticatedUser requester = (AuthenticatedUser) authentication.getPrincipal();
         Event updated = updateEvent.update(id, request.toDomain(requester.id()), requester.id());
         return EventResponse.from(updated);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id, Authentication authentication) {
+        AuthenticatedUser requester = (AuthenticatedUser) authentication.getPrincipal();
+        deleteEvent.delete(id, requester.id());
     }
 }

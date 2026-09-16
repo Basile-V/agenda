@@ -67,6 +67,9 @@ Le frontend est ensuite accessible sur `http://localhost:4200` et communique ave
 - `PUT /api/events/{id}` : modification d'un événement existant (même corps que `POST`) ; réservé
   au propriétaire de l'événement (403 sinon, y compris pour un événement public), 404 si l'id est
   inconnu
+- `DELETE /api/events/{id}` : suppression d'un événement existant (204, sans corps) ; réservé au
+  propriétaire de l'événement (403 sinon, y compris pour un événement public), 404 si l'id est
+  inconnu
 
 Ces endpoints nécessitent d'être authentifié.
 
