@@ -1,6 +1,6 @@
 package com.basile.calendar.infrastructure.out.security;
 
-import com.basile.calendar.domain.port.out.PasswordHasher;
+import com.basile.calendar.domain.port.out.auth.PasswordHasher;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 

@@ -2,7 +2,7 @@ package com.basile.calendar.infrastructure.out.security;
 
 import com.basile.calendar.domain.model.AuthenticatedUser;
 import com.basile.calendar.domain.model.Role;
-import com.basile.calendar.domain.port.out.TokenProvider;
+import com.basile.calendar.domain.port.out.auth.TokenProvider;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;

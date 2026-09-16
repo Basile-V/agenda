@@ -71,17 +71,35 @@ com.basile.calendar
 ├── domain
 │   ├── model                        // Event, User, AuthenticatedUser, AuthSession (records), exceptions métier
 │   └── port
-│       ├── in                       // ports d'entrée : CreateEvent, UpdateEvent, ListEventsForDay, Login, Register, RefreshSession
-│       └── out                      // ports de sortie : EventRepository, UserRepository, PasswordHasher, TokenProvider
+│       ├── in
+│       │   ├── auth                 // Login, Register, RefreshSession
+│       │   └── event                // CreateEvent, UpdateEvent, DeleteEvent, ListEventsForDay
+│       └── out
+│           ├── auth                 // UserRepository, PasswordHasher, TokenProvider
+│           └── event                // EventRepository
 ├── application
-│   └── service                      // CreateEventService, UpdateEventService, ListEventsForDayService, LoginService, RegisterService, RefreshSessionService
+│   └── service
+│       ├── auth                     // LoginService, RegisterService, RefreshSessionService
+│       └── event                    // CreateEventService, UpdateEventService, DeleteEventService, ListEventsForDayService
 └── infrastructure
     ├── in
-    │   └── web                      // EventController, AuthController, SecurityConfig, JwtAuthenticationFilter, ...
+    │   └── web
+    │       ├── auth                 // AuthController, LoginRequest, RegisterRequest, UserResponse, AuthCookieFactory
+    │       ├── event                // EventController, EventRequest, EventResponse
+    │       ├── security             // SecurityConfig, JwtAuthenticationFilter, CsrfCookieFilter, CorsProperties, ...
+    │       └── error                // ApiExceptionHandler, ErrorResponse
     └── out
-        ├── persistence              // JpaEventRepository, JpaUserRepository (ports), entités, repositories Spring Data
-        └── security                 // JwtTokenProvider, BCryptPasswordHasher (implémentations des ports out)
+        ├── persistence
+        │   ├── event                 // JpaEventRepository (port), EventEntity, repository Spring Data
+        │   └── user                  // JpaUserRepository (port), UserEntity, repository Spring Data
+        └── security                  // JwtTokenProvider, BCryptPasswordHasher (implémentations des ports out)
 ```
+
+Chaque couche est d'abord découpée par technologie/préoccupation (`port.in`, `port.out`, `web`,
+`persistence`, ...), puis en sous-packages par fonctionnalité (`auth`, `event`) dès qu'un dossier
+regroupait trop de classes hétérogènes pour rester lisible — `web` seul contenait 16 fichiers avant
+ce découpage. `security` et `error` restent des sous-packages transverses (non liés à une seule
+fonctionnalité).
 
 Le sens des dépendances va toujours de `infrastructure` vers `application`/`domain`, jamais
 l'inverse : le domaine ne dépend de rien.
