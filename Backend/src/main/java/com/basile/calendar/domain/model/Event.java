@@ -25,4 +25,8 @@ public record Event(Long id, String title, LocalDate date, LocalTime start, int 
     public Event withId(Long id) {
         return new Event(id, title, date, start, durationMinutes, ownerId, isPublic);
     }
+
+    public Event withDetails(String title, LocalDate date, LocalTime start, int durationMinutes, boolean isPublic) {
+        return new Event(id, title, date, start, durationMinutes, ownerId, isPublic);
+    }
 }

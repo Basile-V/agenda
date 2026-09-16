@@ -4,6 +4,7 @@ import com.basile.calendar.domain.model.Event;
 import com.basile.calendar.domain.port.out.EventRepository;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -24,5 +25,10 @@ public class JpaEventRepository implements EventRepository {
         return springDataEventRepository.findVisibleOnDate(date, viewerId).stream()
                 .map(EventEntity::toDomain)
                 .toList();
+    }
+
+    @Override
+    public Optional<Event> findById(Long id) {
+        return springDataEventRepository.findById(id).map(EventEntity::toDomain);
     }
 }

@@ -4,15 +4,19 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.basile.calendar.domain.model.AuthenticatedUser;
 import com.basile.calendar.domain.model.Event;
 import com.basile.calendar.domain.model.Role;
+import com.basile.calendar.domain.model.exception.EventAccessDeniedException;
+import com.basile.calendar.domain.model.exception.EventNotFoundException;
 import com.basile.calendar.domain.model.exception.InvalidEventDurationException;
 import com.basile.calendar.domain.port.in.CreateEvent;
 import com.basile.calendar.domain.port.in.ListEventsForDay;
+import com.basile.calendar.domain.port.in.UpdateEvent;
 import com.basile.calendar.domain.port.out.TokenProvider;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -40,6 +44,9 @@ class EventControllerTest {
 
     @MockitoBean
     private ListEventsForDay listEventsForDay;
+
+    @MockitoBean
+    private UpdateEvent updateEvent;
 
     @MockitoBean
     private TokenProvider tokenProvider;
@@ -157,5 +164,69 @@ class EventControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message")
                         .value("La durée d'un événement doit être strictement positive, reçu : 90"));
+    }
+
+    @Test
+    void should_update_event_when_requester_is_owner() throws Exception {
+        Event updated = new Event(1L, "Point équipe renommé", LocalDate.of(2026, 9, 3), LocalTime.of(16, 0), 45, 2L, true);
+        when(updateEvent.update(org.mockito.ArgumentMatchers.eq(1L), any(Event.class), org.mockito.ArgumentMatchers.eq(2L)))
+                .thenReturn(updated);
+
+        mockMvc.perform(put("/api/events/1")
+                        .principal(authenticationFor(2L))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "title": "Point équipe renommé",
+                                  "date": "2026-09-03",
+                                  "start": "16:00",
+                                  "duration": 45,
+                                  "isPublic": true
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.title").value("Point équipe renommé"))
+                .andExpect(jsonPath("$.date").value("2026-09-03"))
+                .andExpect(jsonPath("$.start").value("16:00"))
+                .andExpect(jsonPath("$.duration").value(45))
+                .andExpect(jsonPath("$.ownerId").value(2))
+                .andExpect(jsonPath("$.isPublic").value(true));
+    }
+
+    @Test
+    void should_return_not_found_when_updating_unknown_event() throws Exception {
+        when(updateEvent.update(org.mockito.ArgumentMatchers.eq(404L), any(Event.class), org.mockito.ArgumentMatchers.eq(2L)))
+                .thenThrow(new EventNotFoundException(404L));
+
+        mockMvc.perform(put("/api/events/404")
+                        .principal(authenticationFor(2L))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "date": "2026-09-02",
+                                  "start": "15:00",
+                                  "duration": 90
+                                }
+                                """))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void should_return_forbidden_when_requester_is_not_owner() throws Exception {
+        when(updateEvent.update(org.mockito.ArgumentMatchers.eq(1L), any(Event.class), org.mockito.ArgumentMatchers.eq(99L)))
+                .thenThrow(new EventAccessDeniedException(1L, 99L));
+
+        mockMvc.perform(put("/api/events/1")
+                        .principal(authenticationFor(99L))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "date": "2026-09-02",
+                                  "start": "15:00",
+                                  "duration": 90
+                                }
+                                """))
+                .andExpect(status().isForbidden());
     }
 }

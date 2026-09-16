@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.basile.calendar.domain.model.Event;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -64,5 +65,22 @@ class JpaEventRepositoryTest {
         var events = eventRepository.findVisibleOnDate(LocalDate.of(2026, 9, 2), 1L);
 
         assertThat(events).isEmpty();
+    }
+
+    @Test
+    void should_find_event_by_id_when_it_exists() {
+        Event saved = eventRepository.save(
+                Event.draft("Point équipe", LocalDate.of(2026, 9, 2), LocalTime.of(15, 0), 90, 1L, false));
+
+        Optional<Event> found = eventRepository.findById(saved.id());
+
+        assertThat(found).contains(saved);
+    }
+
+    @Test
+    void should_return_empty_when_id_does_not_exist() {
+        Optional<Event> found = eventRepository.findById(-1L);
+
+        assertThat(found).isEmpty();
     }
 }

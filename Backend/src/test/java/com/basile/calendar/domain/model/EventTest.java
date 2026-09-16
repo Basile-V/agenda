@@ -52,4 +52,21 @@ class EventTest {
         assertThat(persisted.isPublic()).isEqualTo(draft.isPublic());
         assertThat(draft.id()).isNull();
     }
+
+    @Test
+    void should_return_new_instance_with_updated_details_keeping_id_and_owner() {
+        Event existing = Event.draft("Point équipe", LocalDate.of(2026, 9, 2), LocalTime.of(15, 0), 90, 2L, false)
+                .withId(1L);
+
+        Event updated = existing.withDetails(
+                "Point équipe renommé", LocalDate.of(2026, 9, 3), LocalTime.of(16, 0), 45, true);
+
+        assertThat(updated.id()).isEqualTo(1L);
+        assertThat(updated.ownerId()).isEqualTo(2L);
+        assertThat(updated.title()).isEqualTo("Point équipe renommé");
+        assertThat(updated.date()).isEqualTo(LocalDate.of(2026, 9, 3));
+        assertThat(updated.start()).isEqualTo(LocalTime.of(16, 0));
+        assertThat(updated.durationMinutes()).isEqualTo(45);
+        assertThat(updated.isPublic()).isTrue();
+    }
 }

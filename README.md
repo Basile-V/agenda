@@ -14,9 +14,10 @@ Consultez les READMEs dédiés pour plus de détails :
 
 ## Description rapide
 
-Application de type "agenda" (vue jour) permettant d'afficher et de créer des événements sur une
-grille horaire, avec gestion visuelle des chevauchements (deux événements qui se recouvrent dans le
-temps se partagent la largeur disponible). Le frontend interroge le backend via une API REST
+Application de type "agenda" (vue jour) permettant d'afficher, créer et modifier des événements sur
+une grille horaire, avec gestion visuelle des chevauchements (deux événements qui se recouvrent dans
+le temps se partagent la largeur disponible). Un clic sur un événement ouvre le détail dans une
+boîte de dialogue, modifiable par son propriétaire. Le frontend interroge le backend via une API REST
 exposée sur le port `8080`. Chaque événement appartient à l'utilisateur qui l'a créé ; un
 événement peut être marqué public pour être visible par tous les utilisateurs, sinon il n'est
 visible que par son créateur.
@@ -63,8 +64,11 @@ Le frontend est ensuite accessible sur `http://localhost:4200` et communique ave
 - `POST /api/events` : création d'un événement (`title`, `date`, `start`, `duration`, `isPublic`) ;
   le propriétaire (`ownerId`) est déterminé côté serveur à partir de l'utilisateur authentifié, il
   ne peut pas être choisi par le client
+- `PUT /api/events/{id}` : modification d'un événement existant (même corps que `POST`) ; réservé
+  au propriétaire de l'événement (403 sinon, y compris pour un événement public), 404 si l'id est
+  inconnu
 
-Ces deux endpoints nécessitent d'être authentifié.
+Ces endpoints nécessitent d'être authentifié.
 
 Authentification : le backend protège l'API par cookies httpOnly (JWT). Points importants :
 

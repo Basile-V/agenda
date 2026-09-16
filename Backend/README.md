@@ -1,10 +1,11 @@
 # Calendar — Backend
 
 Backend Java 25 / Spring Boot pour l'application **agenda** (vue journalière d'événements). Il
-expose une API REST consommée par le frontend Angular : lister les événements d'un jour donné et
-en créer de nouveaux. Chaque événement appartient à l'utilisateur qui l'a créé ; un événement peut
-en plus être marqué **public**, auquel cas il est visible par tous les utilisateurs authentifiés
-(un événement non public n'est visible que par son créateur).
+expose une API REST consommée par le frontend Angular : lister les événements d'un jour donné,
+en créer de nouveaux et modifier ceux dont on est propriétaire. Chaque événement appartient à
+l'utilisateur qui l'a créé ; un événement peut en plus être marqué **public**, auquel cas il est
+visible par tous les utilisateurs authentifiés (un événement non public n'est visible que par son
+créateur) — seul le propriétaire peut le modifier, qu'il soit public ou non.
 
 ## Stack technique
 
@@ -70,10 +71,10 @@ com.basile.calendar
 ├── domain
 │   ├── model                        // Event, User, AuthenticatedUser, AuthSession (records), exceptions métier
 │   └── port
-│       ├── in                       // ports d'entrée : CreateEvent, ListEventsForDay, Login, Register, RefreshSession
+│       ├── in                       // ports d'entrée : CreateEvent, UpdateEvent, ListEventsForDay, Login, Register, RefreshSession
 │       └── out                      // ports de sortie : EventRepository, UserRepository, PasswordHasher, TokenProvider
 ├── application
-│   └── service                      // CreateEventService, ListEventsForDayService, LoginService, RegisterService, RefreshSessionService
+│   └── service                      // CreateEventService, UpdateEventService, ListEventsForDayService, LoginService, RegisterService, RefreshSessionService
 └── infrastructure
     ├── in
     │   └── web                      // EventController, AuthController, SecurityConfig, JwtAuthenticationFilter, ...
@@ -103,13 +104,16 @@ Le frontend charge ses événements sous la forme `EventRaw` : `id`, `title?`, `
 |---------|--------------------------------|---------------------------------------------------|
 | `GET`   | `/api/events?date=YYYY-MM-DD` | Liste des événements visibles par l'utilisateur courant pour une journée (ses propres événements + les événements publics d'autres utilisateurs) |
 | `POST`  | `/api/events`                 | Création d'un événement (id et `ownerId` générés/déterminés côté serveur) |
+| `PUT`   | `/api/events/{id}`            | Modification d'un événement existant (titre, date, heure, durée, visibilité) |
 
 Toutes les routes `/api/events/**` nécessitent d'être authentifié (cookie `access_token`,
 voir la section Authentification ci-dessous). Le propriétaire (`ownerId`) d'un événement créé
 est **toujours** déterminé côté serveur à partir de l'utilisateur authentifié — un `ownerId` envoyé
-dans le corps de la requête `POST` est ignoré.
+dans le corps de la requête `POST`/`PUT` est ignoré. `PUT /api/events/{id}` renvoie 404 si l'id est
+inconnu, et 403 si l'utilisateur authentifié n'est pas le propriétaire de l'événement (y compris
+pour un événement public : la visibilité n'accorde jamais le droit de modification).
 
-Corps `POST` :
+Corps `POST` (identique pour `PUT`) :
 
 ```json
 {
@@ -121,7 +125,7 @@ Corps `POST` :
 }
 ```
 
-Réponse (`POST` et `GET`, identique à `EventRaw`) :
+Réponse (`POST`, `PUT` et `GET`, identique à `EventRaw`) :
 
 ```json
 {
@@ -184,5 +188,4 @@ OpenAPI, accessible une fois l'application lancée :
 
 ## Prochaines étapes
 
-- Endpoints de modification/suppression d'un événement (`PUT`/`DELETE`) si le besoin apparaît côté
-  frontend.
+- Endpoint de suppression d'un événement (`DELETE`) si le besoin apparaît côté frontend.
