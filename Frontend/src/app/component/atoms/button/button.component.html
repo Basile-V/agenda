@@ -1,11 +1,24 @@
 @if (fab()) {
-  <button matFab class="fab" [attr.aria-label]="ariaLabel() || null" (click)="action()?.()">
+  <button matFab class="fab" [disabled]="disabled()" [attr.aria-label]="ariaLabel() || null" (click)="action()?.()">
     <mat-icon>{{ icon() }}</mat-icon>
+  </button>
+} @else if (filled()) {
+  <button
+    mat-flat-button
+    [color]="color() || null"
+    [type]="type()"
+    [disabled]="disabled()"
+    [attr.aria-label]="ariaLabel() || null"
+    (click)="action()?.()"
+  >
+    {{ message() }}
   </button>
 } @else {
   <button
-    class="effectButton"
-    type="button"
+    mat-button
+    [color]="color() || null"
+    [type]="type()"
+    [disabled]="disabled()"
     [attr.aria-label]="ariaLabel() || null"
     (click)="action()?.()"
   >

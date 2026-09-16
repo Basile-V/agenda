@@ -1,0 +1,75 @@
+@if (!editing()) {
+  <h2 mat-dialog-title>{{ data.event.title || 'Événement' }}</h2>
+
+  <mat-dialog-content class="details-content">
+    <p><strong>Date :</strong> {{ data.event.date }}</p>
+    <p><strong>Heure de début :</strong> {{ data.event.start }}</p>
+    <p><strong>Durée :</strong> {{ data.event.duration }} minutes</p>
+    <p><strong>Visibilité :</strong> {{ data.event.isPublic ? 'Public' : 'Privé' }}</p>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <app-button [filled]="true" message="Fermer" ariaLabel="Fermer" [action]="onClose"></app-button>
+    @if (data.canEdit) {
+      <app-icon class="edit-icon" [icon]="iconEdit" [action]="startEditing"></app-icon>
+    }
+  </mat-dialog-actions>
+} @else {
+  <h2 mat-dialog-title>Modifier l'événement</h2>
+
+  <form [formGroup]="formEdit" (ngSubmit)="onSubmit()">
+    <mat-dialog-content class="form-content">
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Titre</mat-label>
+        <input matInput formControlName="title" placeholder="Ex : Réunion équipe" />
+        @if (formEdit.controls.title.hasError('required')) {
+          <mat-error>Le titre est requis</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Date</mat-label>
+        <input matInput type="date" formControlName="date" />
+        @if (formEdit.controls.date.hasError('required')) {
+          <mat-error>La date est requise</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Heure de début</mat-label>
+        <input matInput type="time" formControlName="start" />
+        @if (formEdit.controls.start.hasError('required')) {
+          <mat-error>L'heure de début est requise</mat-error>
+        }
+        @if (formEdit.controls.start.hasError('pattern')) {
+          <mat-error>Format attendu HH:MM</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Durée (minutes)</mat-label>
+        <input matInput type="number" min="1" formControlName="duration" />
+        @if (formEdit.controls.duration.hasError('required')) {
+          <mat-error>La durée est requise</mat-error>
+        }
+        @if (formEdit.controls.duration.hasError('min')) {
+          <mat-error>La durée doit être positive</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-checkbox formControlName="isPublic">Événement public (visible par tous les utilisateurs)</mat-checkbox>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+      <app-button message="Annuler" ariaLabel="Annuler" [action]="cancelEditing"></app-button>
+      <app-button
+        message="Enregistrer"
+        ariaLabel="Enregistrer"
+        [filled]="true"
+        color="primary"
+        type="submit"
+        [disabled]="formEdit.invalid"
+      ></app-button>
+    </mat-dialog-actions>
+  </form>
+}

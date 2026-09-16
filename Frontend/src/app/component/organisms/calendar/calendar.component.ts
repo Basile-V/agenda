@@ -15,12 +15,14 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { EventService } from '../../../services/event.service';
+import { AuthService } from '../../../services/auth.service';
 import { layoutEvents, LayoutEvent } from '../../../utils/layout.utils';
 import { EventComponent } from '../../molecules/event/event.component';
 import { TimeSlotComponent } from '../../molecules/time-slot/time-slot.component';
 import { DAY_END_HOUR, DAY_START_HOUR, ParsedEvent, toDateKey } from '../../../models/event.model';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateTaskComponent } from '../create-task/create-task.component';
+import { EventDetailsComponent } from '../event-details/event-details.component';
 import { ButtonComponent } from '../../atoms/button/button.component';
 
 @Component({
@@ -33,6 +35,7 @@ import { ButtonComponent } from '../../atoms/button/button.component';
 export class CalendarComponent implements AfterViewInit, OnDestroy {
   @ViewChild('container', { static: true }) containerRef!: ElementRef<HTMLDivElement>;
   private readonly eventService = inject(EventService);
+  private readonly authService = inject(AuthService);
   readonly dialog = inject(MatDialog);
 
   readonly selectedDate = input<Date>(new Date());
@@ -102,6 +105,27 @@ export class CalendarComponent implements AfterViewInit, OnDestroy {
           .createEvent(result)
           .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe((newEvent) => this.allEvents.update((events) => [...events, newEvent]));
+      }
+    });
+  }
+
+  openEventDetails(event: ParsedEvent): void {
+    const canEdit = event.ownerId === this.authService.currentUser()?.id;
+    const dialogRef = this.dialog.open(EventDetailsComponent, { data: { event, canEdit } });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.eventService
+          .updateEvent(event.id, result)
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe((updated) => {
+            const currentDate = toDateKey(this.selectedDate());
+            this.allEvents.update((events) =>
+              updated.date === currentDate
+                ? events.map((e) => (e.id === updated.id ? updated : e))
+                : events.filter((e) => e.id !== updated.id),
+            );
+          });
       }
     });
   }

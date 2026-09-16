@@ -1,7 +1,7 @@
 <div #container class="calendar-container">
   <div class="events-container">
     @for (ev of layouted(); track ev.id) {
-      <app-event [event]="ev"></app-event>
+      <app-event [event]="ev" (eventSelected)="openEventDetails($event)"></app-event>
     }
   </div>
 

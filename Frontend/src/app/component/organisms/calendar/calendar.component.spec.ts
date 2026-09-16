@@ -1,8 +1,12 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { of } from 'rxjs';
 import { CalendarComponent } from './calendar.component';
 import { EventComponent } from '../../molecules/event/event.component';
-import { EventRaw } from '../../../models/event.model';
+import { EventDetailsComponent } from '../event-details/event-details.component';
+import { EventRaw, ParsedEvent } from '../../../models/event.model';
+import { AuthService } from '../../../services/auth.service';
+import { EventService } from '../../../services/event.service';
 
 import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 
@@ -46,5 +50,90 @@ describe('CalendarComponent (integration)', () => {
     const compiled = fixture.debugElement.nativeElement as HTMLElement;
     expect(compiled.querySelector('#event-1')).withContext('event-1 exists').not.toBeNull();
     expect(compiled.querySelector('#event-2')).withContext('event-2 exists').not.toBeNull();
+  });
+
+  describe('openEventDetails', () => {
+    const ownedEvent: ParsedEvent = {
+      id: 1,
+      date: '2026-08-26',
+      start: '10:00',
+      duration: 30,
+      ownerId: 2,
+      isPublic: false,
+      startMinutes: 10 * 60,
+      endMinutes: 10 * 60 + 30,
+    };
+
+    it('allows editing and updates the event when the current user owns it', () => {
+      httpMock.expectOne('http://localhost:8080/api/events?date=2026-08-26').flush([]);
+      const authService = TestBed.inject(AuthService);
+      (authService as unknown as { currentUser: () => { id: number } }).currentUser = () => ({ id: 2 });
+      const updated: ParsedEvent = { ...ownedEvent, title: 'Renommé' };
+      const formValue = { title: 'Renommé', date: '2026-08-26', start: '10:00', duration: 30, isPublic: false };
+      const eventService = TestBed.inject(EventService);
+      const updateEventSpy = spyOn(eventService, 'updateEvent').and.returnValue(of(updated));
+      const dialogRefStub = { afterClosed: () => of(formValue) };
+      const dialogSpy = spyOn(fixture.componentInstance.dialog, 'open').and.returnValue(dialogRefStub as never);
+
+      fixture.componentInstance.openEventDetails(ownedEvent);
+
+      expect(dialogSpy).toHaveBeenCalledWith(EventDetailsComponent, {
+        data: { event: ownedEvent, canEdit: true },
+      });
+      expect(updateEventSpy).toHaveBeenCalledWith(1, formValue);
+    });
+
+    it('keeps the event displayed with its new details when it stays on the same day', () => {
+      httpMock.expectOne('http://localhost:8080/api/events?date=2026-08-26').flush(mockEvents);
+      fixture.detectChanges();
+      const authService = TestBed.inject(AuthService);
+      (authService as unknown as { currentUser: () => { id: number } }).currentUser = () => ({ id: 2 });
+      const updated: ParsedEvent = { ...ownedEvent, title: 'Renommé' };
+      const eventService = TestBed.inject(EventService);
+      spyOn(eventService, 'updateEvent').and.returnValue(of(updated));
+      const dialogRefStub = {
+        afterClosed: () => of({ title: 'Renommé', date: '2026-08-26', start: '10:00', duration: 30, isPublic: false }),
+      };
+      spyOn(fixture.componentInstance.dialog, 'open').and.returnValue(dialogRefStub as never);
+
+      fixture.componentInstance.openEventDetails(ownedEvent);
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.querySelector('#event-1')).withContext('event-1 still shown').not.toBeNull();
+    });
+
+    it('removes the event from the current view when it is moved to another day', () => {
+      httpMock.expectOne('http://localhost:8080/api/events?date=2026-08-26').flush(mockEvents);
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('#event-1')).withContext('event-1 shown before move').not.toBeNull();
+      const authService = TestBed.inject(AuthService);
+      (authService as unknown as { currentUser: () => { id: number } }).currentUser = () => ({ id: 2 });
+      const movedEvent: ParsedEvent = { ...ownedEvent, date: '2026-08-27' };
+      const eventService = TestBed.inject(EventService);
+      spyOn(eventService, 'updateEvent').and.returnValue(of(movedEvent));
+      const dialogRefStub = {
+        afterClosed: () => of({ title: '', date: '2026-08-27', start: '10:00', duration: 30, isPublic: false }),
+      };
+      spyOn(fixture.componentInstance.dialog, 'open').and.returnValue(dialogRefStub as never);
+
+      fixture.componentInstance.openEventDetails(ownedEvent);
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.querySelector('#event-1')).withContext('event-1 removed after move').toBeNull();
+    });
+
+    it('opens read-only when the current user does not own the event', () => {
+      httpMock.expectOne('http://localhost:8080/api/events?date=2026-08-26').flush([]);
+      const authService = TestBed.inject(AuthService);
+      (authService as unknown as { currentUser: () => { id: number } }).currentUser = () => ({ id: 99 });
+      const dialogRefStub = { afterClosed: () => of(undefined) };
+      const dialogSpy = spyOn(fixture.componentInstance.dialog, 'open').and.returnValue(dialogRefStub as never);
+
+      fixture.componentInstance.openEventDetails(ownedEvent);
+
+      expect(dialogSpy).toHaveBeenCalledWith(EventDetailsComponent, {
+        data: { event: ownedEvent, canEdit: false },
+      });
+    });
   });
 });

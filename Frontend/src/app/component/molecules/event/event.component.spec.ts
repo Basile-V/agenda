@@ -73,4 +73,31 @@ describe('EventComponent', () => {
 
     expect(fixture.nativeElement.querySelector('.event-public-badge')).not.toBeNull();
   });
+
+  it('emits select on click with the current event', () => {
+    const mock: LayoutEvent = {
+      id: 44,
+      date: '2026-08-26',
+      start: '10:00',
+      duration: 30,
+      startMinutes: 10 * 60,
+      endMinutes: 10 * 60 + 30,
+      ownerId: 2,
+      isPublic: false,
+      top: 100,
+      left: 50,
+      width: 200,
+      height: 30,
+      column: 0,
+      totalColumns: 1,
+    };
+    fixture.componentRef.setInput('event', mock);
+    fixture.detectChanges();
+    const emitted: LayoutEvent[] = [];
+    fixture.componentInstance.eventSelected.subscribe((e) => emitted.push(e));
+
+    (fixture.nativeElement.querySelector('.event') as HTMLElement).click();
+
+    expect(emitted).toEqual([mock]);
+  });
 });

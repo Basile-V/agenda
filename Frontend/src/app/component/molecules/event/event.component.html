@@ -7,6 +7,8 @@
   [style.width.px]="event()?.width"
   role="button"
   tabindex="0"
+  (click)="onSelect()"
+  (keydown.enter)="onSelect()"
   [attr.aria-label]="
     'Event ' +
     (event()?.id ?? '') +

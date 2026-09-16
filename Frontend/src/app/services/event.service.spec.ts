@@ -57,4 +57,21 @@ describe('EventService', () => {
     expect(req.request.body).toEqual(draft);
     req.flush(created);
   });
+
+  it('updateEvent puts the changes and parses the server-updated event', (done) => {
+    const changes = { title: 'Point équipe renommé', date: '2026-08-27', start: '10:00', duration: 45, isPublic: true };
+    const updated = { id: 42, ownerId: 2, ...changes };
+
+    service.updateEvent(42, changes).subscribe((event) => {
+      expect(event.id).toBe(42);
+      expect(event.title).toBe('Point équipe renommé');
+      expect(event.startMinutes).toBe(10 * 60);
+      done();
+    });
+
+    const req = httpMock.expectOne('http://localhost:8080/api/events/42');
+    expect(req.request.method).toBe('PUT');
+    expect(req.request.body).toEqual(changes);
+    req.flush(updated);
+  });
 });

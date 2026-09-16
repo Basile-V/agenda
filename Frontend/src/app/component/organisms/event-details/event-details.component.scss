@@ -1,0 +1,23 @@
+.details-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 320px;
+}
+
+.form-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 320px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.edit-icon {
+  cursor: pointer;
+  color: #0b57d0;
+  display: flex;
+}

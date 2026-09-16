@@ -1,4 +1,4 @@
-import { Component, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 
 import { LayoutEvent } from '../../../utils/layout.utils';
 
@@ -11,4 +11,12 @@ import { LayoutEvent } from '../../../utils/layout.utils';
 })
 export class EventComponent {
   event = input.required<LayoutEvent | null>();
+  eventSelected = output<LayoutEvent>();
+
+  onSelect(): void {
+    const event = this.event();
+    if (event) {
+      this.eventSelected.emit(event);
+    }
+  }
 }

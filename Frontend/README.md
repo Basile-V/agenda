@@ -32,7 +32,7 @@ npm run lint    # lint ESLint
 # Sujet
 
 
-## L'objectif : afficher et ajouter des événements sur un calendrier journalier (vue "jour")
+## L'objectif : afficher, ajouter et modifier des événements sur un calendrier journalier (vue "jour")
 
 L'application affiche les événements d'une journée sur une grille horaire allant de 09h00 à 21h00
 (`DAY_START_HOUR`/`DAY_END_HOUR`). La position verticale et la hauteur d'un événement se calculent
@@ -44,6 +44,14 @@ En plus de la visualisation, il est possible d'**ajouter un nouvel événement**
 (titre, date, heure de début, durée, case à cocher « public ») ouvert dans une boîte de dialogue ;
 le nouvel événement est envoyé au backend puis positionné sur la grille avec le reste des
 événements du jour, chevauchements inclus.
+
+Un clic (ou `Entrée` au clavier) sur un événement ouvre une boîte de dialogue de **détails**
+([`EventDetailsComponent`](src/app/component/organisms/event-details/event-details.component.ts))
+affichant ses informations complètes. Si l'utilisateur courant est le propriétaire de l'événement,
+un bouton « Modifier » bascule la boîte de dialogue vers le même formulaire réactif que pour la
+création, pré-rempli ; la sauvegarde envoie les changements au backend puis met à jour l'événement
+affiché sur la grille sans recharger la liste du jour. Pour un événement public d'un autre
+utilisateur, la boîte de dialogue reste en lecture seule (pas de bouton « Modifier »).
 
 Chaque événement appartient à l'utilisateur qui l'a créé (authentification requise, voir
 [Backend/README.md](../Backend/README.md#authentification)). Un événement est par défaut privé
@@ -102,6 +110,11 @@ Un événement créé via le formulaire d'ajout est envoyé au backend via
 `POST http://localhost:8080/api/events` (`title`, `date`, `start`, `duration`, `isPublic`) ; le
 backend répond avec l'événement complet (`id` et `ownerId` générés côté serveur), au même format
 que ci-dessus.
+
+Un événement modifié via la boîte de dialogue de détails est envoyé au backend via
+`PUT http://localhost:8080/api/events/{id}` (même corps que `POST`, voir
+[`EventService.updateEvent`](src/app/services/event.service.ts)) ; la requête échoue si
+l'utilisateur courant n'est pas le propriétaire de l'événement.
 
 ___
 
