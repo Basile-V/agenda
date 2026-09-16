@@ -12,6 +12,7 @@
     <app-button [filled]="true" message="Fermer" ariaLabel="Fermer" [action]="onClose"></app-button>
     @if (data.canEdit) {
       <app-icon class="edit-icon" [icon]="iconEdit" [action]="startEditing"></app-icon>
+      <app-icon class="delete-icon" [icon]="iconDelete" [action]="deleteEvent"></app-icon>
     }
   </mat-dialog-actions>
 } @else {

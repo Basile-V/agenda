@@ -74,4 +74,12 @@ describe('EventService', () => {
     expect(req.request.body).toEqual(changes);
     req.flush(updated);
   });
+
+  it('deleteEvent sends a DELETE request for the given id', (done) => {
+    service.deleteEvent(42).subscribe(() => done());
+
+    const req = httpMock.expectOne('http://localhost:8080/api/events/42');
+    expect(req.request.method).toBe('DELETE');
+    req.flush(null);
+  });
 });

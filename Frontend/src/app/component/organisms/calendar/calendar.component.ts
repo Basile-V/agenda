@@ -114,6 +114,13 @@ export class CalendarComponent implements AfterViewInit, OnDestroy {
     const dialogRef = this.dialog.open(EventDetailsComponent, { data: { event, canEdit } });
 
     dialogRef.afterClosed().subscribe((result) => {
+      if (result?.delete) {
+        this.eventService
+          .deleteEvent(event.id)
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe(() => this.allEvents.update((events) => events.filter((e) => e.id !== event.id)));
+        return;
+      }
       if (result) {
         this.eventService
           .updateEvent(event.id, result)

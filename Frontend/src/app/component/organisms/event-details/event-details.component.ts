@@ -34,6 +34,7 @@ export class EventDetailsComponent {
   readonly data = inject<EventDetailsDialogData>(MAT_DIALOG_DATA);
   private readonly fb = inject(FormBuilder);
   iconEdit = 'edit';
+  iconDelete = 'delete';
 
 
   readonly editing = signal(false);
@@ -56,6 +57,10 @@ export class EventDetailsComponent {
 
   onClose = () => {
     this.dialogRef.close();
+  };
+
+  deleteEvent = () => {
+    this.dialogRef.close({ delete: true });
   };
 
   onSubmit(): void {

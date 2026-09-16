@@ -122,6 +122,39 @@ describe('CalendarComponent (integration)', () => {
       expect(fixture.nativeElement.querySelector('#event-1')).withContext('event-1 removed after move').toBeNull();
     });
 
+    it('deletes the event and removes it from the current view when confirmed', () => {
+      httpMock.expectOne('http://localhost:8080/api/events?date=2026-08-26').flush(mockEvents);
+      fixture.detectChanges();
+      const authService = TestBed.inject(AuthService);
+      (authService as unknown as { currentUser: () => { id: number } }).currentUser = () => ({ id: 2 });
+      const eventService = TestBed.inject(EventService);
+      const deleteEventSpy = spyOn(eventService, 'deleteEvent').and.returnValue(of(undefined));
+      const dialogRefStub = { afterClosed: () => of({ delete: true }) };
+      spyOn(fixture.componentInstance.dialog, 'open').and.returnValue(dialogRefStub as never);
+
+      fixture.componentInstance.openEventDetails(ownedEvent);
+      fixture.detectChanges();
+
+      expect(deleteEventSpy).toHaveBeenCalledWith(1);
+      expect(fixture.nativeElement.querySelector('#event-1')).withContext('event-1 removed after delete').toBeNull();
+    });
+
+    it('does not update or delete anything when the dialog is closed without a result', () => {
+      httpMock.expectOne('http://localhost:8080/api/events?date=2026-08-26').flush([]);
+      const authService = TestBed.inject(AuthService);
+      (authService as unknown as { currentUser: () => { id: number } }).currentUser = () => ({ id: 2 });
+      const eventService = TestBed.inject(EventService);
+      const updateEventSpy = spyOn(eventService, 'updateEvent');
+      const deleteEventSpy = spyOn(eventService, 'deleteEvent');
+      const dialogRefStub = { afterClosed: () => of(undefined) };
+      spyOn(fixture.componentInstance.dialog, 'open').and.returnValue(dialogRefStub as never);
+
+      fixture.componentInstance.openEventDetails(ownedEvent);
+
+      expect(updateEventSpy).not.toHaveBeenCalled();
+      expect(deleteEventSpy).not.toHaveBeenCalled();
+    });
+
     it('opens read-only when the current user does not own the event', () => {
       httpMock.expectOne('http://localhost:8080/api/events?date=2026-08-26').flush([]);
       const authService = TestBed.inject(AuthService);

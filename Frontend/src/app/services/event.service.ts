@@ -31,7 +31,11 @@ export class EventService {
       .pipe(map((updated: EventRaw) => this.parseEvent(updated)));
   }
 
-  private parseEvent(e: EventRaw): ParsedEvent {
+  deleteEvent(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.url}/${id}`);
+  }
+
+  parseEvent(e: EventRaw): ParsedEvent {
     const startMinutes = parseTimeToMinutes(e.start);
     const endMinutes = startMinutes + e.duration;
     return { ...e, startMinutes, endMinutes };

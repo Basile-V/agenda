@@ -50,8 +50,10 @@ Un clic (ou `Entrée` au clavier) sur un événement ouvre une boîte de dialogu
 affichant ses informations complètes. Si l'utilisateur courant est le propriétaire de l'événement,
 un bouton « Modifier » bascule la boîte de dialogue vers le même formulaire réactif que pour la
 création, pré-rempli ; la sauvegarde envoie les changements au backend puis met à jour l'événement
-affiché sur la grille sans recharger la liste du jour. Pour un événement public d'un autre
-utilisateur, la boîte de dialogue reste en lecture seule (pas de bouton « Modifier »).
+affiché sur la grille sans recharger la liste du jour. Un bouton « Supprimer » (visible dans les
+mêmes conditions que « Modifier ») envoie une suppression au backend puis retire l'événement de la
+grille. Pour un événement public d'un autre utilisateur, la boîte de dialogue reste en lecture
+seule (pas de bouton « Modifier »/« Supprimer »).
 
 Chaque événement appartient à l'utilisateur qui l'a créé (authentification requise, voir
 [Backend/README.md](../Backend/README.md#authentification)). Un événement est par défaut privé
@@ -115,6 +117,11 @@ Un événement modifié via la boîte de dialogue de détails est envoyé au bac
 `PUT http://localhost:8080/api/events/{id}` (même corps que `POST`, voir
 [`EventService.updateEvent`](src/app/services/event.service.ts)) ; la requête échoue si
 l'utilisateur courant n'est pas le propriétaire de l'événement.
+
+Un événement supprimé via le bouton « Supprimer » de la boîte de dialogue de détails est envoyé au
+backend via `DELETE http://localhost:8080/api/events/{id}` (sans corps, voir
+[`EventService.deleteEvent`](src/app/services/event.service.ts)) ; la requête échoue de la même
+façon si l'utilisateur courant n'est pas le propriétaire de l'événement.
 
 ___
 

@@ -63,6 +63,28 @@ describe('EventDetailsComponent', () => {
     expect(editIcon).not.toBeNull();
   });
 
+  it('hides the delete action when the user cannot edit the event', () => {
+    setup({ event, canEdit: false });
+
+    const deleteIcon = fixture.nativeElement.querySelector('.delete-icon');
+    expect(deleteIcon).toBeNull();
+  });
+
+  it('shows the delete action when the user can edit the event', () => {
+    setup({ event, canEdit: true });
+
+    const deleteIcon = fixture.nativeElement.querySelector('.delete-icon');
+    expect(deleteIcon).not.toBeNull();
+  });
+
+  it('closes with a delete flag when clicking Supprimer', () => {
+    setup({ event, canEdit: true });
+
+    component.deleteEvent();
+
+    expect(dialogRefSpy.close).toHaveBeenCalledWith({ delete: true });
+  });
+
   it('switches to edit mode when clicking Modifier', () => {
     setup({ event, canEdit: true });
 
