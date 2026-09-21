@@ -1,4 +1,4 @@
-import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -24,22 +24,21 @@ export interface EventDetailsDialogData {
     MatCheckboxModule,
     IconComponent,
     ButtonComponent,
-],
+  ],
   templateUrl: './event-details.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./event-details.component.scss'],
 })
 export class EventDetailsComponent {
-  readonly dialogRef = inject(MatDialogRef<EventDetailsComponent>);
-  readonly data = inject<EventDetailsDialogData>(MAT_DIALOG_DATA);
+  protected readonly data = inject<EventDetailsDialogData>(MAT_DIALOG_DATA);
+  protected readonly iconEdit = 'edit';
+  protected readonly iconDelete = 'delete';
+
+  public readonly editing = signal(false);
+
+  private readonly dialogRef = inject(MatDialogRef<EventDetailsComponent>);
   private readonly fb = inject(FormBuilder);
-  iconEdit = 'edit';
-  iconDelete = 'delete';
 
-
-  readonly editing = signal(false);
-
-  formEdit = this.fb.group({
+  public readonly formEdit = this.fb.group({
     title: [this.data.event.title ?? '', Validators.required],
     date: [this.data.event.date, Validators.required],
     start: [this.data.event.start, [Validators.required, Validators.pattern(/^([01]\d|2[0-3]):[0-5]\d$/)]],
@@ -47,23 +46,23 @@ export class EventDetailsComponent {
     isPublic: [this.data.event.isPublic],
   });
 
-  startEditing = () => {
+  public readonly startEditing = (): void => {
     this.editing.set(true);
   };
 
-  cancelEditing = () => {
+  protected readonly cancelEditing = (): void => {
     this.editing.set(false);
   };
 
-  onClose = () => {
+  protected readonly onClose = (): void => {
     this.dialogRef.close();
   };
 
-  deleteEvent = () => {
+  public readonly deleteEvent = (): void => {
     this.dialogRef.close({ delete: true });
   };
 
-  onSubmit(): void {
+  public onSubmit(): void {
     if (this.formEdit.invalid) {
       this.formEdit.markAllAsTouched();
       return;

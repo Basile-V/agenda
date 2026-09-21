@@ -1,39 +1,37 @@
-import { computed, Injectable, inject, signal } from '@angular/core';
+import { computed, inject, Service, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError, of, tap } from 'rxjs';
 import { LoginCredentials, RegisterCredentials, User } from '../models/auth.model';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly url = 'http://localhost:8080/api/auth';
 
   private readonly _currentUser = signal<User | null>(null);
-  readonly currentUser = this._currentUser.asReadonly();
-  readonly isAuthenticated = computed(() => this._currentUser() !== null);
+  public readonly currentUser = this._currentUser.asReadonly();
+  public readonly isAuthenticated = computed(() => this._currentUser() !== null);
 
-  login(credentials: LoginCredentials): Observable<User> {
+  public login(credentials: LoginCredentials): Observable<User> {
     return this.http
       .post<User>(`${this.url}/login`, credentials, { withCredentials: true })
       .pipe(tap((user) => this._currentUser.set(user)));
   }
 
-  register(credentials: RegisterCredentials): Observable<User> {
+  public register(credentials: RegisterCredentials): Observable<User> {
     return this.http
       .post<User>(`${this.url}/register`, credentials, { withCredentials: true })
       .pipe(tap((user) => this._currentUser.set(user)));
   }
 
-  logout(): Observable<void> {
+  public logout(): Observable<void> {
     return this.http
       .post<void>(`${this.url}/logout`, {}, { withCredentials: true })
       .pipe(tap(() => this._currentUser.set(null)));
   }
 
-  restoreSession(): Observable<User | null> {
+  public restoreSession(): Observable<User | null> {
     return this.http.get<User>(`${this.url}/me`, { withCredentials: true }).pipe(
       tap((user) => this._currentUser.set(user)),
       catchError(() => {
@@ -43,7 +41,7 @@ export class AuthService {
     );
   }
 
-  refresh(): Observable<void> {
+  public refresh(): Observable<void> {
     return this.http.post<void>(`${this.url}/refresh`, {}, { withCredentials: true });
   }
 }

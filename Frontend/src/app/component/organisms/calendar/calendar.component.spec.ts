@@ -40,11 +40,12 @@ describe('CalendarComponent (integration)', () => {
     httpMock.verify();
   });
 
-  it('requests events for the selected date and renders them', () => {
+  it('requests events for the selected date and renders them', async () => {
     const req = httpMock.expectOne('http://localhost:8080/api/events?date=2026-08-26');
     expect(req.request.method).toBe('GET');
     req.flush(mockEvents);
 
+    await fixture.whenStable();
     fixture.detectChanges();
 
     const compiled = fixture.debugElement.nativeElement as HTMLElement;
@@ -83,8 +84,9 @@ describe('CalendarComponent (integration)', () => {
       expect(updateEventSpy).toHaveBeenCalledWith(1, formValue);
     });
 
-    it('keeps the event displayed with its new details when it stays on the same day', () => {
+    it('keeps the event displayed with its new details when it stays on the same day', async () => {
       httpMock.expectOne('http://localhost:8080/api/events?date=2026-08-26').flush(mockEvents);
+      await fixture.whenStable();
       fixture.detectChanges();
       const authService = TestBed.inject(AuthService);
       (authService as unknown as { currentUser: () => { id: number } }).currentUser = () => ({ id: 2 });
@@ -102,8 +104,9 @@ describe('CalendarComponent (integration)', () => {
       expect(fixture.nativeElement.querySelector('#event-1')).withContext('event-1 still shown').not.toBeNull();
     });
 
-    it('removes the event from the current view when it is moved to another day', () => {
+    it('removes the event from the current view when it is moved to another day', async () => {
       httpMock.expectOne('http://localhost:8080/api/events?date=2026-08-26').flush(mockEvents);
+      await fixture.whenStable();
       fixture.detectChanges();
       expect(fixture.nativeElement.querySelector('#event-1')).withContext('event-1 shown before move').not.toBeNull();
       const authService = TestBed.inject(AuthService);
@@ -122,8 +125,9 @@ describe('CalendarComponent (integration)', () => {
       expect(fixture.nativeElement.querySelector('#event-1')).withContext('event-1 removed after move').toBeNull();
     });
 
-    it('deletes the event and removes it from the current view when confirmed', () => {
+    it('deletes the event and removes it from the current view when confirmed', async () => {
       httpMock.expectOne('http://localhost:8080/api/events?date=2026-08-26').flush(mockEvents);
+      await fixture.whenStable();
       fixture.detectChanges();
       const authService = TestBed.inject(AuthService);
       (authService as unknown as { currentUser: () => { id: number } }).currentUser = () => ({ id: 2 });

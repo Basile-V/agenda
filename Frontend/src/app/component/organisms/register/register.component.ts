@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,32 +11,35 @@ import { AuthService } from '../../../services/auth.service';
   selector: 'app-register',
   imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule],
   templateUrl: './register.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './register.component.scss',
 })
 export class RegisterComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
 
-  readonly errorMessage = signal<string | null>(null);
+  public readonly errorMessage = signal<string | null>(null);
 
-  registerForm = this.fb.nonNullable.group({
+  public readonly registerForm = this.fb.nonNullable.group({
     username: ['', Validators.required],
     displayName: ['', Validators.required],
     password: ['', [Validators.required, Validators.minLength(8)]],
   });
 
-  onSubmit(): void {
+  public onSubmit(): void {
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
       return;
     }
 
     this.errorMessage.set(null);
-    this.authService.register(this.registerForm.getRawValue()).subscribe({
-      next: () => this.router.navigateByUrl('/'),
-      error: () => this.errorMessage.set("Ce nom d'utilisateur est déjà utilisé"),
-    });
+    this.authService
+      .register(this.registerForm.getRawValue())
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => this.router.navigateByUrl('/'),
+        error: () => this.errorMessage.set("Ce nom d'utilisateur est déjà utilisé"),
+      });
   }
 }

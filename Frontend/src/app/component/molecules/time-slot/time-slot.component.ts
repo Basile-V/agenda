@@ -1,15 +1,12 @@
-import { Component, input, ChangeDetectionStrategy } from '@angular/core';
-
-import { DAY_START_HOUR } from '../../../models/event.model';
+import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'app-time-slot',
   imports: [],
   templateUrl: './time-slot.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./time-slot.component.scss'],
 })
 export class TimeSlotComponent {
-  hour = input.required<number>();
-  height = input.required<number>();
+  public readonly hour = input.required<number>();
+  public readonly height = input.required<number>();
 }

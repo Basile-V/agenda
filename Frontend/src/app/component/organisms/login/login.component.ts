@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,31 +11,34 @@ import { AuthService } from '../../../services/auth.service';
   selector: 'app-login',
   imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule],
   templateUrl: './login.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './login.component.scss',
 })
 export class LoginComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
 
-  readonly errorMessage = signal<string | null>(null);
+  public readonly errorMessage = signal<string | null>(null);
 
-  loginForm = this.fb.nonNullable.group({
+  public readonly loginForm = this.fb.nonNullable.group({
     username: ['', Validators.required],
     password: ['', Validators.required],
   });
 
-  onSubmit(): void {
+  public onSubmit(): void {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       return;
     }
 
     this.errorMessage.set(null);
-    this.authService.login(this.loginForm.getRawValue()).subscribe({
-      next: () => this.router.navigateByUrl('/'),
-      error: () => this.errorMessage.set('Identifiants invalides'),
-    });
+    this.authService
+      .login(this.loginForm.getRawValue())
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => this.router.navigateByUrl('/'),
+        error: () => this.errorMessage.set('Identifiants invalides'),
+      });
   }
 }

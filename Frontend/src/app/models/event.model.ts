@@ -8,6 +8,8 @@ export interface EventRaw {
   isPublic: boolean;
 }
 
+export type EventPayload = Omit<EventRaw, 'id' | 'ownerId'>;
+
 export interface ParsedEvent extends EventRaw {
   startMinutes: number; // minutes since midnight
   endMinutes: number; // minutes since midnight

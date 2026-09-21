@@ -46,7 +46,7 @@ src/app/
       calendar/
       create-task/
   models/            # interfaces + constantes du domaine, fonctions pures de parsing
-  services/          # accès aux données (HttpClient), providedIn: 'root'
+  services/          # accès aux données (HttpClient), décorés avec @Service()
   utils/             # fonctions pures, sans état, sans dépendance Angular (layout, calculs)
   app.config.ts       # providers globaux (router, http, animations)
   app.routes.ts       # routes (vide pour l'instant, app mono-écran)
@@ -91,9 +91,13 @@ Règles à respecter pour que l'atomic design reste cohérent :
 
 - Toujours `standalone` (implicite en Angular 22, ne pas ajouter `standalone: true`,
   c'est la valeur par défaut).
-- `changeDetection: ChangeDetectionStrategy.OnPush` sur tout nouveau composant, sauf
-  raison explicite. (Note : `ChangeDetectionStrategy.Eager` est le nouveau nom du mode
-  `Default` — c'est un mode à éviter pour les nouveaux composants, préférer `OnPush`.)
+- Ne pas déclarer `changeDetection: ChangeDetectionStrategy.OnPush` : c'est la stratégie par
+  défaut depuis Angular 22, la répéter est du bruit. Ne mettre `changeDetection` que pour
+  opter explicitement pour `ChangeDetectionStrategy.Eager` (ex-`Default`), avec une raison
+  documentée.
+- Écrire **tous les modificateurs d'accès** (`public`/`private`/`protected`, + `readonly` quand
+  c'est pertinent) sur chaque membre de classe (champs, méthodes, accesseurs), y compris
+  `public`, pour ne pas dépendre du niveau implicite. Exception : `constructor`.
 - Préférer les **signal inputs/outputs** (`input()`, `input.required()`, `output()`)
   aux décorateurs `@Input()`/`@Output()` pour tout nouveau code — meilleure inférence
   de type, compatible `OnPush` par construction, pas besoin de `ngOnChanges`.
@@ -109,18 +113,29 @@ Règles à respecter pour que l'atomic design reste cohérent :
 
 ### State & reactivity
 
-- Préférer `signal()`/`computed()`/`effect()` à la gestion d'état impérative via des
-  champs de classe + `ChangeDetectorRef.detectChanges()`, comme dans
-  [calendar.component.ts](src/app/component/organisms/calendar/calendar.component.ts)
-  (`layouted`/`height` en `signal`, composant en `OnPush`, pas de `ChangeDetectorRef`).
+- Préférer `signal()`/`computed()` à la gestion d'état impérative via des champs de classe +
+  `ChangeDetectorRef.detectChanges()`. Une valeur dérivée d'autres signaux est un `computed()`,
+  jamais un `effect()` qui fait un `set()` sur un autre signal.
+- Réserver `effect()` aux effets de bord (DOM, log, stockage) ; ne pas s'en servir pour
+  synchroniser de l'état.
+- Le chargement de données dépendant de signaux (ex. l'événement d'une date sélectionnée) se fait
+  avec `rxResource()` (ou `resource()`), lu via `.value()`/`.isLoading()`/`.error()`, plutôt qu'avec
+  un `effect()` + `subscribe()` + `signal.set()`.
 - RxJS reste pertinent pour les flux asynchrones (HTTP, événements DOM) ; convertir en
   signal avec `toSignal()` dès que la valeur doit être lue dans un template ou un `computed`.
 - Toujours désabonner (`takeUntilDestroyed()` ou `async` pipe) — jamais de `subscribe()`
-  sans gestion du cycle de vie dans un composant qui peut être détruit.
+  sans gestion du cycle de vie dans un composant qui peut être détruit. Cela vaut aussi pour
+  `MatDialogRef.afterClosed()` et les appels HTTP déclenchés depuis un handler.
+- Une seule source d'écoute par événement : pour la taille d'un élément, `ResizeObserver` (avec
+  `disconnect()` au destroy) **ou** `@HostListener('window:resize')`, jamais les deux.
+- Pour dimensionner/positionner, préférer CSS (pourcentages, grid, flex, `calc()`) aux calculs en
+  pixels faits en TypeScript à partir de `clientWidth`/`clientHeight`.
 
 ### Services & data access
 
-- `providedIn: 'root'` pour les services applicatifs, injection via `inject()`.
+- `@Service()` (Angular 22) pour les services applicatifs, à la place de
+  `@Injectable({ providedIn: 'root' })` : il est fourni à la racine automatiquement. Injection
+  via `inject()` uniquement (règle lint `prefer-inject`), jamais par constructeur.
 - Les services renvoient des types du domaine (`models/`), jamais des DTOs bruts non
   typés — voir le pattern `EventRaw` → `ParsedEvent` dans `EventService`.
 - Les fonctions de calcul pur (parsing, layout) vont dans `utils/`, testées
@@ -175,11 +190,12 @@ Règles à respecter pour que l'atomic design reste cohérent :
 
 - ESLint est configuré ([eslint.config.js](eslint.config.js)) avec `@angular-eslint`/
   `typescript-eslint` (`tsRecommended`, `templateRecommended`, `templateAccessibility`) ;
-  lancer `npm run lint` avant de pousser.
+  lancer `npm run lint` avant de pousser : il doit rester à **0 erreur** (imports inutilisés,
+  préfixe de sélecteur `app-`, pas de `any` explicite, y compris dans les `*.spec.ts`).
 - Formatage : Prettier via `prettier-eslint`, config dans [.prettierrc](.prettierrc).
 
-Tous les composants sont désormais en `ChangeDetectionStrategy.OnPush` avec des signal
-inputs (`input()`/`input.required()`) plutôt que `@Input()` — à conserver comme standard
+Tous les composants utilisent des signal inputs (`input()`/`input.required()`) plutôt que
+`@Input()`, avec la détection de changements par défaut (`OnPush`) — à conserver comme standard
 pour tout nouveau composant.
 
 ## Documentation — mettre à jour le README après chaque gros changement

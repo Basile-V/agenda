@@ -1,4 +1,4 @@
-import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 
 import { LayoutEvent } from '../../../utils/layout.utils';
 
@@ -6,14 +6,13 @@ import { LayoutEvent } from '../../../utils/layout.utils';
   selector: 'app-event',
   imports: [],
   templateUrl: './event.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./event.component.scss'],
 })
 export class EventComponent {
-  event = input.required<LayoutEvent | null>();
-  eventSelected = output<LayoutEvent>();
+  public readonly event = input.required<LayoutEvent | null>();
+  public readonly eventSelected = output<LayoutEvent>();
 
-  onSelect(): void {
+  public onSelect(): void {
     const event = this.event();
     if (event) {
       this.eventSelected.emit(event);

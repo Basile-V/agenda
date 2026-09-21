@@ -1,5 +1,20 @@
 import { minutesToY, pixelsPerMinute, layoutEvents } from './layout.utils';
-import { DAY_START_MIN, DAY_END_MIN } from '../models/event.model';
+import { DAY_START_MIN, DAY_END_MIN, ParsedEvent } from '../models/event.model';
+
+function makeEvent(id: number, start: string, duration: number): ParsedEvent {
+  const [hours, minutes] = start.split(':').map(Number);
+  const startMinutes = hours * 60 + minutes;
+  return {
+    id,
+    date: '2026-01-01',
+    start,
+    duration,
+    ownerId: 1,
+    isPublic: false,
+    startMinutes,
+    endMinutes: startMinutes + duration,
+  };
+}
 
 describe('layout.utils', () => {
   it('minutesToY maps start and end correctly', () => {
@@ -18,14 +33,14 @@ describe('layout.utils', () => {
   });
 
   it('layoutEvents assigns expected number of columns and widths for overlapping events', () => {
-    const events = [
-      { id: 1, start: '10:00', duration: 120, startMinutes: 10 * 60, endMinutes: 12 * 60 },
-      { id: 2, start: '10:30', duration: 60, startMinutes: 10 * 60 + 30, endMinutes: 11 * 60 + 30 },
-      { id: 3, start: '11:00', duration: 30, startMinutes: 11 * 60, endMinutes: 11 * 60 + 30 },
+    const events: ParsedEvent[] = [
+      makeEvent(1, '10:00', 120),
+      makeEvent(2, '10:30', 60),
+      makeEvent(3, '11:00', 30),
     ];
     const width = 600;
     const height = 720;
-    const laid = layoutEvents(events as any, width, height);
+    const laid = layoutEvents(events, width, height);
     // all three overlap transitively -> at least 2 columns required; check widths are <= container
     for (const e of laid) {
       expect(e.width).toBeLessThanOrEqual(width);

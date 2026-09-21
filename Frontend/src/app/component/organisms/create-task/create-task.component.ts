@@ -1,4 +1,4 @@
-import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject } from '@angular/core';
 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -13,7 +13,7 @@ export interface CreateTaskDialogData {
 }
 
 @Component({
-  selector: 'create-task-event',
+  selector: 'app-create-task',
   imports: [
     ReactiveFormsModule,
     MatDialogModule,
@@ -23,15 +23,14 @@ export interface CreateTaskDialogData {
     MatCheckboxModule,
   ],
   templateUrl: './create-task.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./create-task.component.scss'],
 })
 export class CreateTaskComponent {
-  readonly dialogRef = inject(MatDialogRef<CreateTaskComponent>);
+  private readonly dialogRef = inject(MatDialogRef<CreateTaskComponent>);
   private readonly data = inject<CreateTaskDialogData | null>(MAT_DIALOG_DATA, { optional: true });
   private readonly fb = inject(FormBuilder);
 
-  form = this.fb.group({
+  protected readonly form = this.fb.group({
     title: ['', Validators.required],
     date: [this.data?.date ?? toDateKey(new Date()), Validators.required],
     start: ['', [Validators.required, Validators.pattern(/^([01]\d|2[0-3]):[0-5]\d$/)]],
@@ -39,11 +38,11 @@ export class CreateTaskComponent {
     isPublic: [false],
   });
 
-  onNoClick(): void {
+  protected onNoClick(): void {
     this.dialogRef.close();
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
