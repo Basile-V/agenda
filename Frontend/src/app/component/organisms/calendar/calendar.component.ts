@@ -9,22 +9,16 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
-import { filter, Observable, switchMap, tap } from 'rxjs';
+import { filter, switchMap } from 'rxjs';
 
-import { EventService } from '../../../services/event.service';
+import { EventStateService } from '../../../services/event-state.service';
 import { AuthService } from '../../../services/auth.service';
 import { layoutEvents, LayoutEvent } from '../../../utils/layout.utils';
 import { EventComponent } from '../../molecules/event/event.component';
 import { TimeSlotComponent } from '../../molecules/time-slot/time-slot.component';
-import {
-  DAY_END_HOUR,
-  DAY_START_HOUR,
-  EventPayload,
-  ParsedEvent,
-  toDateKey,
-} from '../../../models/event.model';
+import { DAY_END_HOUR, DAY_START_HOUR, ParsedEvent, toDateKey } from '../../../models/event.model';
 import { CreateTaskComponent } from '../create-task/create-task.component';
 import { EventDetailsComponent } from '../event-details/event-details.component';
 import { ButtonComponent } from '../../atoms/button/button.component';
@@ -34,6 +28,7 @@ const EVENTS_LEFT_MARGIN_PX = 20;
 @Component({
   selector: 'app-calendar',
   imports: [EventComponent, TimeSlotComponent, ButtonComponent],
+  providers: [EventStateService],
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.scss'],
 })
@@ -46,17 +41,13 @@ export class CalendarComponent {
     (_, i) => DAY_START_HOUR + i,
   );
 
-  private readonly eventService = inject(EventService);
+  private readonly eventState = inject(EventStateService);
   private readonly authService = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly container = viewChild.required<ElementRef<HTMLDivElement>>('container');
 
   private readonly containerSize = signal({ width: 0, height: 0 });
-  private readonly events = rxResource({
-    params: () => toDateKey(this.selectedDate()),
-    stream: ({ params }) => this.eventService.loadEvents(params),
-    defaultValue: [] as ParsedEvent[],
-  });
+  private readonly events = this.eventState.loadFor(() => toDateKey(this.selectedDate()));
 
   protected readonly height = computed(() => this.containerSize().height);
   protected readonly layouted = computed<LayoutEvent[]>(() => {
@@ -80,10 +71,10 @@ export class CalendarComponent {
       .afterClosed()
       .pipe(
         filter(Boolean),
-        switchMap((result) => this.eventService.createEvent(result)),
+        switchMap((result) => this.eventState.createEvent(result)),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((created) => this.events.update((list) => [...list, created]));
+      .subscribe();
   }
 
   public openEventDetails(event: ParsedEvent): void {
@@ -95,7 +86,9 @@ export class CalendarComponent {
       .pipe(
         filter(Boolean),
         switchMap((result) =>
-          result.delete ? this.deleteEvent(event.id) : this.updateEvent(event.id, result),
+          result.delete
+            ? this.eventState.deleteEvent(event.id)
+            : this.eventState.updateEvent(event.id, result),
         ),
         takeUntilDestroyed(this.destroyRef),
       )
@@ -104,24 +97,5 @@ export class CalendarComponent {
 
   private measureContainer(element: HTMLElement): void {
     this.containerSize.set({ width: element.clientWidth, height: element.clientHeight });
-  }
-
-  private deleteEvent(id: number): Observable<void> {
-    return this.eventService
-      .deleteEvent(id)
-      .pipe(tap(() => this.events.update((list) => list.filter((e) => e.id !== id))));
-  }
-
-  private updateEvent(id: number, changes: EventPayload): Observable<ParsedEvent> {
-    return this.eventService.updateEvent(id, changes).pipe(
-      tap((updated) => {
-        const isOnDisplayedDay = updated.date === toDateKey(this.selectedDate());
-        this.events.update((list) =>
-          isOnDisplayedDay
-            ? list.map((e) => (e.id === updated.id ? updated : e))
-            : list.filter((e) => e.id !== updated.id),
-        );
-      }),
-    );
   }
 }
