@@ -39,11 +39,13 @@ pour la prod.
 
 ## Déploiement
 
-Le build de production (`npm run build`) génère `dist/rendering-events/browser/`, prêt à être
-servi par un hébergeur statique. Un fichier `_redirects` (`/* /index.html 200`) y est copié
-automatiquement pour que les routes de l'Angular Router (`/:date`) fonctionnent sur un rechargement
-ou un lien direct. Sur Cloudflare Pages : *root directory* `Frontend`, build command `npm run
-build`, output directory `dist/rendering-events/browser`. Voir
+Le build de production (`npm run build`) génère `dist/rendering-events/browser/`, servi par
+Cloudflare via **Workers Static Assets** (config `wrangler.json`) plutôt que l'ancien formulaire
+Cloudflare Pages : build command `npm run build`, deploy command `npx wrangler deploy`. Le routage
+SPA (routes de l'Angular Router comme `/:date` fonctionnant sur un rechargement ou un lien direct)
+est géré nativement par `assets.not_found_handling: "single-page-application"` dans
+`wrangler.json` — ne pas ajouter de fichier `_redirects` en plus, les deux mécanismes entrent en
+conflit (boucle infinie détectée par Cloudflare au déploiement). Voir
 [le README racine](../README.md) pour l'architecture de déploiement complète.
 
 # Sujet
