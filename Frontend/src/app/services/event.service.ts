@@ -2,7 +2,7 @@ import { inject, Service } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { EventPayload, EventRaw, ParsedEvent, parseTimeToMinutes } from '../models/event.model';
+import { EventPayload, EventRawDTO, ParsedEvent, parseTimeToMinutes } from '../models/event.model';
 
 @Service()
 export class EventService {
@@ -12,29 +12,29 @@ export class EventService {
   public loadEvents(date: string): Observable<ParsedEvent[]> {
     const params = new HttpParams().set('date', date);
     return this.http
-      .get<EventRaw[]>(this.url, { params })
-      .pipe(map((list: EventRaw[]) => list.map((e: EventRaw) => this.parseEvent(e))));
+      .get<EventRawDTO[]>(this.url, { params })
+      .pipe(map((eventDtos: EventRawDTO[]) => eventDtos.map((eventDto) => this.parseEvent(eventDto))));
   }
 
-  public createEvent(raw: EventPayload): Observable<ParsedEvent> {
+  public createEvent(payload: EventPayload): Observable<ParsedEvent> {
     return this.http
-      .post<EventRaw>(this.url, raw)
-      .pipe(map((created: EventRaw) => this.parseEvent(created)));
+      .post<EventRawDTO>(this.url, payload)
+      .pipe(map((createdEventDto: EventRawDTO) => this.parseEvent(createdEventDto)));
   }
 
-  public updateEvent(id: number, raw: EventPayload): Observable<ParsedEvent> {
+  public updateEvent(id: number, payload: EventPayload): Observable<ParsedEvent> {
     return this.http
-      .put<EventRaw>(`${this.url}/${id}`, raw)
-      .pipe(map((updated: EventRaw) => this.parseEvent(updated)));
+      .put<EventRawDTO>(`${this.url}/${id}`, payload)
+      .pipe(map((updatedEventDto: EventRawDTO) => this.parseEvent(updatedEventDto)));
   }
 
   public deleteEvent(id: number): Observable<void> {
     return this.http.delete<void>(`${this.url}/${id}`);
   }
 
-  public parseEvent(e: EventRaw): ParsedEvent {
-    const startMinutes = parseTimeToMinutes(e.start);
-    const endMinutes = startMinutes + e.duration;
-    return { ...e, startMinutes, endMinutes };
+  public parseEvent(eventDto: EventRawDTO): ParsedEvent {
+    const startMinutes = parseTimeToMinutes(eventDto.start);
+    const endMinutes = startMinutes + eventDto.duration;
+    return { ...eventDto, startMinutes, endMinutes };
   }
 }

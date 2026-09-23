@@ -9,7 +9,7 @@ import { LayoutEvent } from '../../../utils/layout.utils';
   styleUrls: ['./event.component.scss'],
 })
 export class EventComponent {
-  public readonly event = input.required<LayoutEvent | null>();
+  public readonly event = input.required<LayoutEvent>();
   public readonly eventSelected = output<LayoutEvent>();
 
   public onSelect(): void {

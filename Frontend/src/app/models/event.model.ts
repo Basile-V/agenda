@@ -1,4 +1,4 @@
-export interface EventRaw {
+export interface EventRawDTO {
   id: number;
   title?: string;
   date: string; // 'YYYY-MM-DD'
@@ -8,9 +8,9 @@ export interface EventRaw {
   isPublic: boolean;
 }
 
-export type EventPayload = Omit<EventRaw, 'id' | 'ownerId'>;
+export type EventPayload = Omit<EventRawDTO, 'id' | 'ownerId'>;
 
-export interface ParsedEvent extends EventRaw {
+export interface ParsedEvent extends EventRawDTO {
   startMinutes: number; // minutes since midnight
   endMinutes: number; // minutes since midnight
 }
@@ -30,6 +30,11 @@ export function toDateKey(date: Date): string {
   const month = `${date.getMonth() + 1}`.padStart(2, '0');
   const day = `${date.getDate()}`.padStart(2, '0');
   return `${year}-${month}-${day}`;
+}
+
+export function fromDateKey(dateKey: string): Date {
+  const [year, month, day] = dateKey.split('-').map(Number);
+  return new Date(year, month - 1, day);
 }
 
 export function isSameDate(eventDate: string, date: Date): boolean {

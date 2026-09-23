@@ -1,6 +1,7 @@
 import {
   parseTimeToMinutes,
   toDateKey,
+  fromDateKey,
   isSameDate,
   DAY_START_MIN,
   DAY_END_MIN,
@@ -23,6 +24,11 @@ describe('event.model', () => {
   it('formats a Date to a YYYY-MM-DD key', () => {
     expect(toDateKey(new Date(2026, 7, 26))).toBe('2026-08-26');
     expect(toDateKey(new Date(2026, 0, 5))).toBe('2026-01-05');
+  });
+
+  it('parses a YYYY-MM-DD key back to a Date', () => {
+    expect(toDateKey(fromDateKey('2026-08-26'))).toBe('2026-08-26');
+    expect(fromDateKey('2026-01-05')).toEqual(new Date(2026, 0, 5));
   });
 
   it('compares an event date string against a Date', () => {

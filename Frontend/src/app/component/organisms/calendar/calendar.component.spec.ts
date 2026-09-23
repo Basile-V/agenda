@@ -4,7 +4,7 @@ import { of } from 'rxjs';
 import { CalendarComponent } from './calendar.component';
 import { EventComponent } from '../../molecules/event/event.component';
 import { EventDetailsComponent } from '../event-details/event-details.component';
-import { EventRaw, ParsedEvent } from '../../../models/event.model';
+import { EventRawDTO, ParsedEvent } from '../../../models/event.model';
 import { AuthService } from '../../../services/auth.service';
 import { EventService } from '../../../services/event.service';
 
@@ -14,7 +14,7 @@ describe('CalendarComponent (integration)', () => {
   let fixture: ComponentFixture<CalendarComponent>;
   let httpMock: HttpTestingController;
 
-  const mockEvents: EventRaw[] = [
+  const mockEventDtos: EventRawDTO[] = [
     { id: 1, date: '2026-08-26', start: '10:00', duration: 30, ownerId: 2, isPublic: false },
     { id: 2, date: '2026-08-26', start: '14:00', duration: 60, ownerId: 2, isPublic: true },
   ];
@@ -43,7 +43,7 @@ describe('CalendarComponent (integration)', () => {
   it('requests events for the selected date and renders them', async () => {
     const req = httpMock.expectOne('http://localhost:8080/api/events?date=2026-08-26');
     expect(req.request.method).toBe('GET');
-    req.flush(mockEvents);
+    req.flush(mockEventDtos);
 
     await fixture.whenStable();
     fixture.detectChanges();
@@ -85,7 +85,7 @@ describe('CalendarComponent (integration)', () => {
     });
 
     it('keeps the event displayed with its new details when it stays on the same day', async () => {
-      httpMock.expectOne('http://localhost:8080/api/events?date=2026-08-26').flush(mockEvents);
+      httpMock.expectOne('http://localhost:8080/api/events?date=2026-08-26').flush(mockEventDtos);
       await fixture.whenStable();
       fixture.detectChanges();
       const authService = TestBed.inject(AuthService);
@@ -105,7 +105,7 @@ describe('CalendarComponent (integration)', () => {
     });
 
     it('removes the event from the current view when it is moved to another day', async () => {
-      httpMock.expectOne('http://localhost:8080/api/events?date=2026-08-26').flush(mockEvents);
+      httpMock.expectOne('http://localhost:8080/api/events?date=2026-08-26').flush(mockEventDtos);
       await fixture.whenStable();
       fixture.detectChanges();
       expect(fixture.nativeElement.querySelector('#event-1')).withContext('event-1 shown before move').not.toBeNull();
@@ -126,7 +126,7 @@ describe('CalendarComponent (integration)', () => {
     });
 
     it('deletes the event and removes it from the current view when confirmed', async () => {
-      httpMock.expectOne('http://localhost:8080/api/events?date=2026-08-26').flush(mockEvents);
+      httpMock.expectOne('http://localhost:8080/api/events?date=2026-08-26').flush(mockEventDtos);
       await fixture.whenStable();
       fixture.detectChanges();
       const authService = TestBed.inject(AuthService);
