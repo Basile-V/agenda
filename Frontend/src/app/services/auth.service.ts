@@ -3,11 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError, of, tap } from 'rxjs';
 import { LoginCredentials, RegisterCredentials, User } from '../models/auth.model';
+import { environment } from '../../environments/environment';
 
 @Service()
 export class AuthService {
   private readonly http = inject(HttpClient);
-  private readonly url = 'http://localhost:8080/api/auth';
+  private readonly url = `${environment.apiBaseUrl}/api/auth`;
 
   private readonly _currentUser = signal<User | null>(null);
   public readonly currentUser = this._currentUser.asReadonly();

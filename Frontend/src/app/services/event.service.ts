@@ -3,11 +3,12 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { EventPayload, EventRawDTO, ParsedEvent, parseTimeToMinutes } from '../models/event.model';
+import { environment } from '../../environments/environment';
 
 @Service()
 export class EventService {
   private readonly http = inject(HttpClient);
-  private readonly url = 'http://localhost:8080/api/events';
+  private readonly url = `${environment.apiBaseUrl}/api/events`;
 
   public loadEvents(date: string): Observable<ParsedEvent[]> {
     const params = new HttpParams().set('date', date);

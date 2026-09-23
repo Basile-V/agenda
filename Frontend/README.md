@@ -29,6 +29,23 @@ npm test        # tests unitaires (Karma/Jasmine)
 npm run lint    # lint ESLint
 ```
 
+## Configuration de l'URL du backend
+
+L'URL de base de l'API est définie dans `src/environments/environment.ts` (dev, valeur par défaut
+`http://localhost:8080`). Le build de production (`npm run build`, configuration `production`)
+remplace ce fichier par `src/environments/environment.prod.ts` (`fileReplacements` dans
+`angular.json`) : y renseigner l'URL du backend déployé (ex. le service Render) avant de builder
+pour la prod.
+
+## Déploiement
+
+Le build de production (`npm run build`) génère `dist/rendering-events/browser/`, prêt à être
+servi par un hébergeur statique. Un fichier `_redirects` (`/* /index.html 200`) y est copié
+automatiquement pour que les routes de l'Angular Router (`/:date`) fonctionnent sur un rechargement
+ou un lien direct. Sur Cloudflare Pages : *root directory* `Frontend`, build command `npm run
+build`, output directory `dist/rendering-events/browser`. Voir
+[le README racine](../README.md) pour l'architecture de déploiement complète.
+
 # Sujet
 
 
