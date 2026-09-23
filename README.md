@@ -97,6 +97,22 @@ Voir le fichier `Backend/README.md` pour le contrat JSON complet et les détails
 - Travaillez sur une branche dédiée puis ouvrez une merge request vers `main`.
 - Respectez les consignes de lint/tests avant de pousser.
 
+## Déploiement
+
+Architecture retenue, gratuite :
+
+- **Frontend** : [Cloudflare Pages](https://pages.cloudflare.com/) (build statique Angular).
+- **Backend** : [Render](https://render.com/) (service web Docker, free tier), via le
+  `Backend/Dockerfile`.
+- **Base de données** : [Neon](https://neon.tech/) (PostgreSQL gratuit), à la place du H2 fichier
+  utilisé en local.
+
+Frontend et Backend sont servis sur deux domaines différents : les cookies JWT passent donc en
+`SameSite=None; Secure` en production (au lieu de `SameSite=Lax` en local), et le CORS du backend
+doit autoriser explicitement l'origine du frontend déployé. Détails des variables d'environnement
+et du séquencement du déploiement : voir la section « Déploiement » de
+[Backend/README.md](Backend/README.md) et de [Frontend/README.md](Frontend/README.md).
+
 ## Ressources et documentation
 
 - Détails backend : Backend/README.md
