@@ -37,7 +37,7 @@ class AuthCookieFactory {
         return ResponseCookie.from(name, value)
                 .httpOnly(true)
                 .secure(jwtProperties.cookieSecure())
-                .sameSite("Lax")
+                .sameSite(jwtProperties.cookieSameSite())
                 .path(path)
                 .maxAge(maxAge)
                 .build();

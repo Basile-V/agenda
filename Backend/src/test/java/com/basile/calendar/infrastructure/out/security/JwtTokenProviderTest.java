@@ -18,7 +18,8 @@ class JwtTokenProviderTest {
             "test-secret-key-not-for-production-use-32-bytes-minimum-required",
             Duration.ofMinutes(15),
             Duration.ofDays(7),
-            false);
+            false,
+            "Lax");
     private static final AuthenticatedUser USER = new AuthenticatedUser(1L, "basile", "Basile", Role.ADMIN);
 
     @Test
@@ -72,7 +73,8 @@ class JwtTokenProviderTest {
                 "another-secret-key-completely-different-from-the-first-one-used",
                 Duration.ofMinutes(15),
                 Duration.ofDays(7),
-                false);
+                false,
+                "Lax");
         JwtTokenProvider otherTokenProvider = new JwtTokenProvider(otherProperties, Clock.fixed(NOW, ZoneOffset.UTC));
         String accessToken = otherTokenProvider.generateAccessToken(USER);
 

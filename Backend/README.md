@@ -11,7 +11,7 @@ créateur) — seul le propriétaire peut le modifier, qu'il soit public ou non.
 
 - Java 25
 - Spring Boot 4.1.1 (`spring-boot-starter-webmvc`)
-- Spring Data JPA + H2 (persistance, base fichier en local)
+- Spring Data JPA + H2 (persistance en local) / PostgreSQL (persistance en production)
 - Liquibase (migrations de schéma + données de seed)
 - Bean Validation (`spring-boot-starter-validation`)
 - Spring Security (`spring-boot-starter-security`) + JJWT (JWT stateless en cookies httpOnly)
@@ -42,6 +42,24 @@ Autres commandes utiles :
 
 Le frontend (`Frontend/`, Angular, `http://localhost:4200`) appelle cette API en local ;
 le CORS est déjà configuré pour autoriser cette origine (voir `infrastructure.in.web.WebConfig`).
+
+## Déploiement
+
+Un `Dockerfile` (build multi-stage Maven/JDK 25 → JRE 25) permet de packager le backend pour un
+hébergeur qui exécute des conteneurs (ex. Render). Variables d'environnement à fournir en
+production :
+
+| Variable                             | Rôle                                                        |
+|----------------------------------------|--------------------------------------------------------------|
+| `PORT`                                  | Port d'écoute (`server.port`), injecté par l'hébergeur       |
+| `JWT_SECRET`                            | Secret de signature JWT (32 octets minimum)                  |
+| `COOKIE_SECURE`                         | `true` en HTTPS                                               |
+| `COOKIE_SAME_SITE`                      | `None` si le frontend est sur un domaine différent           |
+| `APP_CORS_ALLOWED_ORIGIN`               | Origine du frontend déployé (ex. URL Cloudflare Pages)       |
+| `SPRING_DATASOURCE_URL` / `_USERNAME` / `_PASSWORD` | Connexion à la base PostgreSQL de production      |
+
+Voir [le README racine](../README.md) pour l'architecture de déploiement complète
+(Cloudflare Pages + Render + Neon).
 
 ## Architecture : hexagonale (ports & adapters)
 
@@ -193,6 +211,11 @@ Détails du contrat :
   d'environnement `COOKIE_SECURE` (`false` par défaut, pour le dev en HTTP local) ; le passer à
   `true` dès qu'un déploiement sert l'API en HTTPS — sans quoi les cookies (et donc le mot de
   passe envoyé au login, protégé uniquement par le chiffrement TLS) peuvent circuler en clair.
+- L'attribut `SameSite` des cookies (`app.jwt.cookie-same-site`) est surchargeable par la variable
+  d'environnement `COOKIE_SAME_SITE` (`Lax` par défaut). Passer à `None` (avec `COOKIE_SECURE=true`,
+  requis par les navigateurs pour `SameSite=None`) dès que le frontend est servi sur un domaine
+  différent du backend (ex. Cloudflare Pages + Render) : en `Lax`, les cookies ne sont pas envoyés
+  sur des requêtes cross-site, l'authentification échouerait silencieusement.
 - Deux utilisateurs de démonstration sont seedés (mot de passe `demo1234`) : `admin` (rôle `ADMIN`)
   et `basile` (rôle `USER`).
 

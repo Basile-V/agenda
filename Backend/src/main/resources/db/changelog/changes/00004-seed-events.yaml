@@ -8,7 +8,7 @@ databaseChangeLog:
             tableName: event
             columns:
               - column: { name: id, valueNumeric: 7 }
-              - column: { name: event_date, valueComputed: "DATEADD('DAY', -1, CURRENT_DATE)" }
+              - column: { name: event_date, valueComputed: "CURRENT_DATE - INTERVAL '1' DAY" }
               - column: { name: start_time, valueDate: "10:45:00" }
               - column: { name: duration_minutes, valueNumeric: 30 }
               - column: { name: user_id, valueNumeric: 2 }
@@ -17,7 +17,7 @@ databaseChangeLog:
             tableName: event
             columns:
               - column: { name: id, valueNumeric: 8 }
-              - column: { name: event_date, valueComputed: "DATEADD('DAY', -1, CURRENT_DATE)" }
+              - column: { name: event_date, valueComputed: "CURRENT_DATE - INTERVAL '1' DAY" }
               - column: { name: start_time, valueDate: "17:00:00" }
               - column: { name: duration_minutes, valueNumeric: 60 }
               - column: { name: user_id, valueNumeric: 2 }
@@ -26,7 +26,7 @@ databaseChangeLog:
             tableName: event
             columns:
               - column: { name: id, valueNumeric: 9 }
-              - column: { name: event_date, valueComputed: "DATEADD('DAY', -1, CURRENT_DATE)" }
+              - column: { name: event_date, valueComputed: "CURRENT_DATE - INTERVAL '1' DAY" }
               - column: { name: start_time, valueDate: "10:00:00" }
               - column: { name: duration_minutes, valueNumeric: 30 }
               - column: { name: user_id, valueNumeric: 2 }
@@ -35,7 +35,7 @@ databaseChangeLog:
             tableName: event
             columns:
               - column: { name: id, valueNumeric: 10 }
-              - column: { name: event_date, valueComputed: "DATEADD('DAY', -1, CURRENT_DATE)" }
+              - column: { name: event_date, valueComputed: "CURRENT_DATE - INTERVAL '1' DAY" }
               - column: { name: start_time, valueDate: "11:50:00" }
               - column: { name: duration_minutes, valueNumeric: 20 }
               - column: { name: user_id, valueNumeric: 2 }
@@ -44,7 +44,7 @@ databaseChangeLog:
             tableName: event
             columns:
               - column: { name: id, valueNumeric: 11 }
-              - column: { name: event_date, valueComputed: "DATEADD('DAY', -1, CURRENT_DATE)" }
+              - column: { name: event_date, valueComputed: "CURRENT_DATE - INTERVAL '1' DAY" }
               - column: { name: start_time, valueDate: "19:00:00" }
               - column: { name: duration_minutes, valueNumeric: 60 }
               - column: { name: user_id, valueNumeric: 2 }
@@ -109,7 +109,7 @@ databaseChangeLog:
             tableName: event
             columns:
               - column: { name: id, valueNumeric: 12 }
-              - column: { name: event_date, valueComputed: "DATEADD('DAY', 1, CURRENT_DATE)" }
+              - column: { name: event_date, valueComputed: "CURRENT_DATE + INTERVAL '1' DAY" }
               - column: { name: start_time, valueDate: "09:00:00" }
               - column: { name: duration_minutes, valueNumeric: 45 }
               - column: { name: user_id, valueNumeric: 2 }
@@ -118,7 +118,7 @@ databaseChangeLog:
             tableName: event
             columns:
               - column: { name: id, valueNumeric: 13 }
-              - column: { name: event_date, valueComputed: "DATEADD('DAY', 1, CURRENT_DATE)" }
+              - column: { name: event_date, valueComputed: "CURRENT_DATE + INTERVAL '1' DAY" }
               - column: { name: start_time, valueDate: "14:45:00" }
               - column: { name: duration_minutes, valueNumeric: 60 }
               - column: { name: user_id, valueNumeric: 2 }
@@ -127,7 +127,7 @@ databaseChangeLog:
             tableName: event
             columns:
               - column: { name: id, valueNumeric: 14 }
-              - column: { name: event_date, valueComputed: "DATEADD('DAY', 1, CURRENT_DATE)" }
+              - column: { name: event_date, valueComputed: "CURRENT_DATE + INTERVAL '1' DAY" }
               - column: { name: start_time, valueDate: "19:20:00" }
               - column: { name: duration_minutes, valueNumeric: 10 }
               - column: { name: user_id, valueNumeric: 2 }
@@ -136,7 +136,7 @@ databaseChangeLog:
             tableName: event
             columns:
               - column: { name: id, valueNumeric: 15 }
-              - column: { name: event_date, valueComputed: "DATEADD('DAY', 1, CURRENT_DATE)" }
+              - column: { name: event_date, valueComputed: "CURRENT_DATE + INTERVAL '1' DAY" }
               - column: { name: start_time, valueDate: "11:50:00" }
               - column: { name: duration_minutes, valueNumeric: 30 }
               - column: { name: user_id, valueNumeric: 2 }
@@ -145,7 +145,7 @@ databaseChangeLog:
             tableName: event
             columns:
               - column: { name: id, valueNumeric: 16 }
-              - column: { name: event_date, valueComputed: "DATEADD('DAY', 1, CURRENT_DATE)" }
+              - column: { name: event_date, valueComputed: "CURRENT_DATE + INTERVAL '1' DAY" }
               - column: { name: start_time, valueDate: "11:40:00" }
               - column: { name: duration_minutes, valueNumeric: 40 }
               - column: { name: user_id, valueNumeric: 2 }
@@ -154,7 +154,7 @@ databaseChangeLog:
             tableName: event
             columns:
               - column: { name: id, valueNumeric: 17 }
-              - column: { name: event_date, valueComputed: "DATEADD('DAY', 1, CURRENT_DATE)" }
+              - column: { name: event_date, valueComputed: "CURRENT_DATE + INTERVAL '1' DAY" }
               - column: { name: start_time, valueDate: "14:00:00" }
               - column: { name: duration_minutes, valueNumeric: 30 }
               - column: { name: user_id, valueNumeric: 2 }
@@ -176,7 +176,7 @@ databaseChangeLog:
             columns:
               - column: { name: id, valueNumeric: 19 }
               - column: { name: title, value: "Pot de départ (public)" }
-              - column: { name: event_date, valueComputed: "DATEADD('DAY', -1, CURRENT_DATE)" }
+              - column: { name: event_date, valueComputed: "CURRENT_DATE - INTERVAL '1' DAY" }
               - column: { name: start_time, valueDate: "18:30:00" }
               - column: { name: duration_minutes, valueNumeric: 45 }
               - column: { name: user_id, valueNumeric: 1 }
@@ -186,11 +186,25 @@ databaseChangeLog:
             columns:
               - column: { name: id, valueNumeric: 20 }
               - column: { name: title, value: "Formation Angular (public)" }
-              - column: { name: event_date, valueComputed: "DATEADD('DAY', 1, CURRENT_DATE)" }
+              - column: { name: event_date, valueComputed: "CURRENT_DATE + INTERVAL '1' DAY" }
               - column: { name: start_time, valueDate: "10:00:00" }
               - column: { name: duration_minutes, valueNumeric: 90 }
               - column: { name: user_id, valueNumeric: 1 }
               - column: { name: is_public, valueBoolean: true }
 
+  - changeSet:
+      id: 00004-seed-events-restart-sequence-h2
+      author: basile
+      context: seed
+      dbms: h2
+      changes:
         - sql:
             sql: ALTER TABLE event ALTER COLUMN id RESTART WITH 21
+  - changeSet:
+      id: 00004-seed-events-restart-sequence-postgresql
+      author: basile
+      context: seed
+      dbms: postgresql
+      changes:
+        - sql:
+            sql: SELECT setval(pg_get_serial_sequence('event', 'id'), 21, false)

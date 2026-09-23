@@ -4,5 +4,6 @@ import java.time.Duration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "app.jwt")
-public record JwtProperties(String secret, Duration accessTokenTtl, Duration refreshTokenTtl, boolean cookieSecure) {
+public record JwtProperties(
+        String secret, Duration accessTokenTtl, Duration refreshTokenTtl, boolean cookieSecure, String cookieSameSite) {
 }

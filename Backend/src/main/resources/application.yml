@@ -1,3 +1,6 @@
+server:
+  port: ${PORT:8080}
+
 spring:
   application:
     name: calendar
@@ -30,5 +33,6 @@ app:
     access-token-ttl: 15m
     refresh-token-ttl: 7d
     cookie-secure: ${COOKIE_SECURE:false}
+    cookie-same-site: ${COOKIE_SAME_SITE:Lax}
   cors:
     allowed-origin: http://localhost:4200

@@ -60,7 +60,7 @@ class AuthControllerTest {
 
         @Bean
         JwtProperties jwtProperties() {
-            return new JwtProperties("test-secret", Duration.ofMinutes(15), Duration.ofDays(7), false);
+            return new JwtProperties("test-secret", Duration.ofMinutes(15), Duration.ofDays(7), false, "Lax");
         }
     }
 

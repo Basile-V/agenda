@@ -19,5 +19,17 @@ databaseChangeLog:
               - column: { name: password_hash, value: "$2a$10$F5oxjim.f1gkL1.Va71LAOIDQiSxZpHNw74D9qhaGd5ynJ9UYtwCy" }
               - column: { name: display_name, value: Basile }
               - column: { name: role, value: USER }
+  - changeSet:
+      id: 00002-seed-users-restart-sequence-h2
+      author: basile
+      dbms: h2
+      changes:
         - sql:
             sql: ALTER TABLE app_user ALTER COLUMN id RESTART WITH 3
+  - changeSet:
+      id: 00002-seed-users-restart-sequence-postgresql
+      author: basile
+      dbms: postgresql
+      changes:
+        - sql:
+            sql: SELECT setval(pg_get_serial_sequence('app_user', 'id'), 3, false)
