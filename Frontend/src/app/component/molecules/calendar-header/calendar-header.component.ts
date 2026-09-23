@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject, model } from '@angular/core';
+import { Component, DestroyRef, inject, input } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
+import { toDateKey } from '../../../models/event.model';
 import { ButtonComponent } from '../../atoms/button/button.component';
 import { IconComponent } from '../../atoms/icon/icon.component';
 
@@ -13,7 +14,7 @@ import { IconComponent } from '../../atoms/icon/icon.component';
   styleUrls: ['./calendar-header.component.scss'],
 })
 export class CalendarHeaderComponent {
-  public readonly dateSelected = model<Date>(new Date());
+  public readonly dateSelected = input.required<Date>();
 
   protected readonly todayButton = "Aujourd'hui";
   protected readonly iconLeft = 'keyboard_arrow_left';
@@ -27,21 +28,19 @@ export class CalendarHeaderComponent {
   protected readonly currentUser = this.authService.currentUser;
 
   protected readonly setToday = (): void => {
-    this.dateSelected.set(new Date());
+    this.navigateTo(new Date());
   };
 
   protected readonly setNextDay = (): void => {
-    const currentDate = this.dateSelected();
-    const nextDate = new Date(currentDate);
-    nextDate.setDate(currentDate.getDate() + 1);
-    this.dateSelected.set(nextDate);
+    const nextDate = new Date(this.dateSelected());
+    nextDate.setDate(nextDate.getDate() + 1);
+    this.navigateTo(nextDate);
   };
 
   protected readonly setPreviousDay = (): void => {
-    const currentDate = this.dateSelected();
-    const previousDate = new Date(currentDate);
-    previousDate.setDate(currentDate.getDate() - 1);
-    this.dateSelected.set(previousDate);
+    const previousDate = new Date(this.dateSelected());
+    previousDate.setDate(previousDate.getDate() - 1);
+    this.navigateTo(previousDate);
   };
 
   protected readonly logout = (): void => {
@@ -50,4 +49,8 @@ export class CalendarHeaderComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.router.navigateByUrl('/login'));
   };
+
+  private navigateTo(date: Date): void {
+    this.router.navigateByUrl(`/${toDateKey(date)}`);
+  }
 }

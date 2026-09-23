@@ -1,6 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { CalendarComponent } from '../../organisms/calendar/calendar.component';
 import { CalendarHeaderComponent } from '../../molecules/calendar-header/calendar-header.component';
+import { fromDateKey } from '../../../models/event.model';
 
 @Component({
   selector: 'app-home',
@@ -9,5 +10,7 @@ import { CalendarHeaderComponent } from '../../molecules/calendar-header/calenda
   styleUrl: './home.component.scss',
 })
 export class HomeComponent {
-  protected readonly selectedDate = signal(new Date());
+  public readonly date = input.required<string>();
+
+  protected readonly selectedDate = computed(() => fromDateKey(this.date()));
 }
