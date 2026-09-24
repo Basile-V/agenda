@@ -1,7 +1,7 @@
 import { computed, inject, Service, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { catchError, of, tap } from 'rxjs';
+import { catchError, of, shareReplay, tap } from 'rxjs';
 import { LoginCredentials, RegisterCredentials, User } from '../models/auth.model';
 import { environment } from '../../environments/environment';
 
@@ -13,6 +13,8 @@ export class AuthService {
   private readonly _currentUser = signal<User | null>(null);
   public readonly currentUser = this._currentUser.asReadonly();
   public readonly isAuthenticated = computed(() => this._currentUser() !== null);
+
+  private sessionRestoration$: Observable<User | null> | null = null;
 
   public login(credentials: LoginCredentials): Observable<User> {
     return this.http
@@ -40,6 +42,11 @@ export class AuthService {
         return of(null);
       }),
     );
+  }
+
+  public ensureSessionRestored(): Observable<User | null> {
+    this.sessionRestoration$ ??= this.restoreSession().pipe(shareReplay(1));
+    return this.sessionRestoration$;
   }
 
   public refresh(): Observable<void> {

@@ -38,6 +38,7 @@ src/app/
     atoms/
       button/
       icon/
+      loader/
     molecules/
       calendar-header/
       event/
@@ -60,7 +61,7 @@ sont déclarées dans `imports: [...]` du décorateur `@Component`.
 Le dossier `component/` est organisé en `atoms/`, `molecules/`, `organisms/` :
 
 - **Atoms** (`component/atoms/`) : composants purement présentationnels, sans logique
-  métier, réutilisables partout — `button`, `icon`. Ils ne connaissent ni `EventService`
+  métier, réutilisables partout — `button`, `icon`, `loader`. Ils ne connaissent ni `EventService`
   ni le modèle `ParsedEvent`.
 - **Molecules** (`component/molecules/`) : composants d'affichage qui composent des atoms
   ou portent un peu de logique locale sans appel service — `calendar-header` (compose

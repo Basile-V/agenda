@@ -48,6 +48,17 @@ est géré nativement par `assets.not_found_handling: "single-page-application"`
 conflit (boucle infinie détectée par Cloudflare au déploiement). Voir
 [le README racine](../README.md) pour l'architecture de déploiement complète.
 
+### Mise en veille du backend (hébergement gratuit)
+
+Le backend hébergé en offre gratuite se met en veille après une période d'inactivité ; son réveil
+peut prendre jusqu'à une minute. Pour ne pas laisser l'utilisateur devant un écran vide,
+l'intercepteur `slowRequestInterceptor` signale au `LoadingService` toute requête toujours en
+attente après `SLOW_REQUEST_DELAY_MS` (2 s), et `AppComponent` affiche alors un overlay (atom
+`app-loader`) jusqu'à la réponse. Cela couvre aussi le démarrage : l'application s'affiche sans
+attendre le backend, et c'est `authGuard` qui attend la restauration de session
+(`AuthService.ensureSessionRestored()`, un seul appel `GET /api/auth/me`) avant d'ouvrir le
+calendrier.
+
 # Sujet
 
 

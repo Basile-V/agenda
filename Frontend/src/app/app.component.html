@@ -1,1 +1,10 @@
 <router-outlet></router-outlet>
+
+@if (isWaitingForServer()) {
+  <div class="server-wakeup-overlay">
+    <app-loader
+      title="Le serveur se réveille…"
+      message="Il est hébergé gratuitement et se met en veille quand personne ne l'utilise. Cela peut prendre jusqu'à une minute, merci de votre patience."
+    ></app-loader>
+  </div>
+}

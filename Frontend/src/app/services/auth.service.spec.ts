@@ -74,6 +74,14 @@ describe('AuthService', () => {
     req.flush('unauthorized', { status: 401, statusText: 'Unauthorized' });
   });
 
+  it('ensureSessionRestored calls /me only once', () => {
+    service.ensureSessionRestored().subscribe();
+    httpMock.expectOne('http://localhost:8080/api/auth/me').flush(user);
+
+    service.ensureSessionRestored().subscribe((result) => expect(result).toEqual(user));
+    httpMock.expectNone('http://localhost:8080/api/auth/me');
+  });
+
   it('logout clears currentUser', (done) => {
     service.login({ username: 'alice', password: 'secret' }).subscribe(() => {
       service.logout().subscribe(() => {
